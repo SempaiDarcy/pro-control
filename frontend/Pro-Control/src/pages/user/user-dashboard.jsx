@@ -1,9 +1,9 @@
 import React from 'react';
 
-export const Dashboard = () => {
+export const UserDashboard = () => {
     return (
         <div>
-            Dashboard
+            UserDashboard
         </div>
     );
 };
