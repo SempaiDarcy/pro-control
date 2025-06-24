@@ -1,16 +1,18 @@
-import { useState } from 'react';
-import { AuthLayout } from "../../components/layouts/auth-layout.jsx";
-import { Input } from "../../components/inputs/input.jsx";
-import { Link, useNavigate } from "react-router-dom";
+import {useContext, useState} from 'react';
+import {AuthLayout} from "../../components/layouts/auth-layout.jsx";
+import {Input} from "../../components/inputs/input.jsx";
+import {Link, useNavigate} from "react-router-dom";
 import {validateEmail} from "../../utils/helper.js";
 import axiosInstance from "../../utils/axios-instance.js";
 import {API_PATHS} from "../../utils/api-paths.js";
+import {UserContext} from "../../context/user-context.jsx";
 
 export const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
 
+    const {updateUser} = useContext(UserContext)
     const navigate = useNavigate();
 
     // Обработка отправки формы входа
@@ -39,7 +41,7 @@ export const Login = () => {
 
             if (token) {
                 localStorage.setItem("token", token);
-                // updateUser(response.data)
+                updateUser(response.data)
 
                 // Перенаправление в зависимости от роли
                 if (role === "admin") {
@@ -68,7 +70,7 @@ export const Login = () => {
                 <form onSubmit={handleLogin}>
                     <Input
                         value={email}
-                        onChange={({ target }) => setEmail(target.value)}
+                        onChange={({target}) => setEmail(target.value)}
                         label="Электронная почта"
                         placeholder="ivan@example.com"
                         type="text"
@@ -76,7 +78,7 @@ export const Login = () => {
 
                     <Input
                         value={password}
-                        onChange={({ target }) => setPassword(target.value)}
+                        onChange={({target}) => setPassword(target.value)}
                         label="Пароль"
                         placeholder="Минимум 8 символов"
                         type="password"
