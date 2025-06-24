@@ -3,6 +3,8 @@ import { AuthLayout } from "../../components/layouts/auth-layout.jsx";
 import { Input } from "../../components/inputs/input.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import {validateEmail} from "../../utils/helper.js";
+import axiosInstance from "../../utils/axios-instance.js";
+import {API_PATHS} from "../../utils/api-paths.js";
 
 export const Login = () => {
     const [email, setEmail] = useState("");
@@ -27,7 +29,33 @@ export const Login = () => {
 
         setError("");
         // Вызов API для входа
-    };
+        try {
+            const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+                email,
+                password,
+            });
+
+            const {token, role} = response.data;
+
+            if (token) {
+                localStorage.setItem("token", token);
+                // updateUser(response.data)
+
+                // Перенаправление в зависимости от роли
+                if (role === "admin") {
+                    navigate("/admin/dashboard");
+                } else {
+                    navigate("/user/dashboard");
+                }
+            }
+        } catch (error) {
+            if (error.response && error.response.data.message) {
+                setError(error.response.data.message); // сообщение с сервера
+            } else {
+                setError("Что-то пошло не так. Пожалуйста, попробуйте ещё раз.");
+            }
+        }
+    }
 
     return (
         <AuthLayout>
