@@ -1,22 +1,24 @@
-import { useEffect, useState, useContext } from "react";
-import { useUserAuth } from "../../hooks/use-user-auth.jsx";
-import { UserContext } from "../../context/user-context.jsx";
-import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
-import { useNavigate } from "react-router-dom";
+import {useEffect, useState, useContext} from "react";
+import {useUserAuth} from "../../hooks/use-user-auth.jsx";
+import {UserContext} from "../../context/user-context.jsx";
+import {DashboardLayout} from "../../components/layouts/dashboard-layout.jsx";
+import {useNavigate} from "react-router-dom";
 import axiosInstance from "../../utils/axios-instance.js";
-import { API_PATHS } from "../../utils/api-paths.js";
+import {API_PATHS} from "../../utils/api-paths.js";
 import moment from "moment";
-import { addThousandsSeparator } from "../../utils/helper";
-import { InfoCard } from "../../components/Cards/info-card.jsx";
-import { LuArrowRight } from "react-icons/lu";
+import {addThousandsSeparator} from "../../utils/helper";
+import {InfoCard} from "../../components/Cards/info-card.jsx";
+import {LuArrowRight} from "react-icons/lu";
 import {TaskListTable} from "../../components/task-list-table.jsx";
+import {CustomPieChart} from "../../components/charts/custom-pie-chart.jsx";
+import {CustomBarChart} from "../../components/charts/custom-bar-chart.jsx";
 
 const COLORS = ["#8D51FF", "#00B8DB", "#7BCE00"];
 
 export const Dashboard = () => {
     useUserAuth();
 
-    const { user } = useContext(UserContext);
+    const {user} = useContext(UserContext);
     const navigate = useNavigate();
 
     const [dashboardData, setDashboardData] = useState(null);
@@ -29,17 +31,17 @@ export const Dashboard = () => {
         const taskPriorityLevels = data?.taskPriorityLevels || null;
 
         const taskDistributionData = [
-            { status: "В ожидании", count: taskDistribution?.Pending || 0 },
-            { status: "В работе", count: taskDistribution?.InProgress || 0 },
-            { status: "Завершено", count: taskDistribution?.Completed || 0 },
+            {status: "В ожидании", count: taskDistribution?.Pending || 0},
+            {status: "В работе", count: taskDistribution?.InProgress || 0},
+            {status: "Завершено", count: taskDistribution?.Completed || 0},
         ];
 
         setPieChartData(taskDistributionData);
 
         const PriorityLevelData = [
-            { priority: "Низкий", count: taskPriorityLevels?.Low || 0 },
-            { priority: "Средний", count: taskPriorityLevels?.Medium || 0 },
-            { priority: "Высокий", count: taskPriorityLevels?.High || 0 },
+            {priority: "Низкий", count: taskPriorityLevels?.Low || 0},
+            {priority: "Средний", count: taskPriorityLevels?.Medium || 0},
+            {priority: "Высокий", count: taskPriorityLevels?.High || 0},
         ];
 
         setBarChartData(PriorityLevelData);
@@ -66,7 +68,8 @@ export const Dashboard = () => {
     useEffect(() => {
         getDashboardData();
 
-        return () => {};
+        return () => {
+        };
     }, []);
 
     return (
@@ -75,7 +78,7 @@ export const Dashboard = () => {
                 <div>
                     <div className="col-span-3">
                         <h2 className="text-xl md:text-2xl">
-                            Доброе утро, {user?.name}!
+                            Здравствуй, {user?.name}!
                         </h2>
                         <p className="text-xs md:text-[13px] text-gray-400 mt-1.5">
                             {moment().format("dddd, Do MMM YYYY")}
@@ -124,6 +127,10 @@ export const Dashboard = () => {
                         <div className="flex items-center justify-between">
                             <h5 className="font-medium">Распределение задач</h5>
                         </div>
+                        <CustomPieChart
+                            data={pieChartData}
+                            colors={COLORS}
+                        />
                     </div>
                 </div>
 
@@ -132,6 +139,10 @@ export const Dashboard = () => {
                         <div className="flex items-center justify-between">
                             <h5 className="font-medium">Приоритеты задач</h5>
                         </div>
+
+                        <CustomBarChart
+                            data={barChartData}
+                        />
                     </div>
                 </div>
 
@@ -141,11 +152,11 @@ export const Dashboard = () => {
                             <h5 className="text-lg">Последние задачи</h5>
 
                             <button className="card-btn" onClick={onSeeMore}>
-                                Смотреть все <LuArrowRight className="text-base" />
+                                Смотреть все <LuArrowRight className="text-base"/>
                             </button>
                         </div>
 
-                        <TaskListTable tableData={dashboardData?.recentTasks || []} />
+                        <TaskListTable tableData={dashboardData?.recentTasks || []}/>
                     </div>
                 </div>
             </div>
