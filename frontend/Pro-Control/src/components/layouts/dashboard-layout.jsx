@@ -8,7 +8,7 @@ export const DashboardLayout = ({ children, activeMenu }) => {
 
     return (
         <div className="">
-            <Navbar activeMenu={activeMenu} />
+            < Navbar activeMenu={activeMenu} />
 
             {user && (
                 <div className="flex">
