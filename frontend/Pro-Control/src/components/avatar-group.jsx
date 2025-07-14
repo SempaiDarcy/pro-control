@@ -5,7 +5,7 @@ export const AvatarGroup = ({avatars, names = [], maxVisible = 3}) => {
     return (
         <div className="flex items-center">
             {avatars.slice(0, maxVisible).map((avatar, index) => {
-                const name = names[index] || ""; // добавляем имя по индексу
+                const name = names[index] || "";
 
                 return (
                     <div key={index} className="relative group -ml-3 first:ml-0">

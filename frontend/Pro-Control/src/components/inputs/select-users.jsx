@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {API_PATHS} from "../../utils/api-paths";
 import axiosInstance from "../../utils/axios-instance";
-import {LuUsers} from "react-icons/lu";
+import {LuUser} from "react-icons/lu";
 import {Modal} from "../modal";
 import {AvatarGroup} from "../avatar-group";
 
@@ -61,7 +61,7 @@ export const SelectUsers = ({selectedUsers, setSelectedUsers}) => {
         <div className="space-y-4 mt-2">
             {selectedUserAvatars.length === 0 && (
                 <button className="card-btn" onClick={() => setIsModalOpen(true)}>
-                    <LuUsers className="text-sm"/> Добавить участников
+                    <LuUser className="text-sm"/> Добавить участников
                 </button>
             )}
 
@@ -83,11 +83,17 @@ export const SelectUsers = ({selectedUsers, setSelectedUsers}) => {
                             key={user._id}
                             className="flex items-center gap-4 p-3 border-b border-gray-200"
                         >
-                            <img
-                                src={user.profileImageUrl || null}
-                                alt={user.name}
-                                className="w-10 h-10 rounded-full"
-                            />
+                            {user.profileImageUrl ? (
+                                <img
+                                    src={user.profileImageUrl}
+                                    alt={user.name}
+                                    className="w-10 h-10 rounded-full border-2 border-white"
+                                />
+                            ) : (
+                                <div className="w-10 h-10 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-gray-600">
+                                    <LuUser className="w-5 h-5" />
+                                </div>
+                            )}
                             <div className="flex-1">
                                 <p className="font-medium text-gray-800 dark:text-white">
                                     {user.name}
