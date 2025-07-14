@@ -50,12 +50,11 @@ export const SelectUsers = ({selectedUsers, setSelectedUsers}) => {
     }, []);
 
     useEffect(() => {
-        if (selectedUsers.length === 0) {
-            setTempSelectedUsers([]);
+        if (isModalOpen) {
+            setTempSelectedUsers(selectedUsers); // копируем выбранных
         }
+    }, [isModalOpen]);
 
-        return () => {};
-    }, [selectedUsers]);
 
     return (
         <div className="space-y-4 mt-2">
