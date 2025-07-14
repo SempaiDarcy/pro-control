@@ -12,6 +12,7 @@
         font-family: var(--font-display), sans-serif;
     }
     body {
+        /*background-color: #fcfbfc;*/
         background-color: #fcfbfc;
         overflow-x: hidden;
     }

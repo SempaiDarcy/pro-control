@@ -39,7 +39,11 @@ export const SelectUsers = ({selectedUsers, setSelectedUsers}) => {
 
     const selectedUserAvatars = allUsers
         .filter((user) => selectedUsers.includes(user._id))
-        .map((user) => user.profileImageUrl);
+        .map((user) => user.profileImageUrl || null);
+
+    const selectedUserNames = allUsers
+        .filter((user) => selectedUsers.includes(user._id))
+        .map((user) => user.name);
 
     useEffect(() => {
         getAllUsers();
@@ -63,7 +67,8 @@ export const SelectUsers = ({selectedUsers, setSelectedUsers}) => {
 
             {selectedUserAvatars.length > 0 && (
                 <div className="cursor-pointer" onClick={() => setIsModalOpen(true)}>
-                    <AvatarGroup avatars={selectedUserAvatars} maxVisible={3}/>
+                    <AvatarGroup avatars={selectedUserAvatars} names={selectedUserNames} maxVisible={3} />
+
                 </div>
             )}
 

@@ -36,7 +36,7 @@ export const CustomBarChart = ({data}) => {
                         {payload[0].payload.priority}
                     </p>
                     <p className="text-sm text-gray-600">
-                        Count:{" "}
+                        Задач:{" "}
                         <span className="text-sm font-medium text-gray-900">
               {payload[0].payload.count}
             </span>
