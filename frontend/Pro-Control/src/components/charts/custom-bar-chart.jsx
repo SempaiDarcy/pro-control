@@ -16,19 +16,17 @@ export const CustomBarChart = ({data}) => {
     // Function to alternate colors
     const getBarColor = (entry) => {
         switch (entry?.priority) {
-            case 'Low':
-                return '#00BC7D'
-
-            case 'Medium':
-                return '#FE9900'
-
-            case 'High':
-                return '#FF1F57'
-
+            case 'Низкий':
+                return '#00BC7D';
+            case 'Средний':
+                return '#FE9900';
+            case 'Высокий':
+                return '#FF1F57';
             default:
-                return '#00BC7D'
+                return '#00BC7D';
         }
     };
+
 
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
