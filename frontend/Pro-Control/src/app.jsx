@@ -18,6 +18,7 @@ import {MyTasks} from "./pages/user/my-tasks.jsx";
 import {ViewTaskDetails} from "./pages/user/view-task-details.jsx";
 import UserProvider, {UserContext} from "./context/user-context.jsx";
 import {useContext} from "react";
+import {Toaster} from "react-hot-toast";
 
 function App() {
     return (
@@ -48,6 +49,14 @@ function App() {
                     </Routes>
                 </Router>
             </div>
+            <Toaster
+                toastOptions={{
+                    className: "",
+                    style: {
+                        fontSize: "13px",
+                    },
+                }}
+            />
         </UserProvider>
     )
 }
