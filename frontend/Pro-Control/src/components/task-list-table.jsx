@@ -1,5 +1,4 @@
-import React from 'react'
-import moment from 'moment'
+import React from 'react';
 
 export const TaskListTable = ({ tableData }) => {
   const getStatusBadgeColor = (status) => {
@@ -38,6 +37,17 @@ export const TaskListTable = ({ tableData }) => {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '—';
+
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
   return (
       <div className="overflow-x-auto p-0 rounded-lg mt-3">
         <table className="min-w-full">
@@ -52,7 +62,9 @@ export const TaskListTable = ({ tableData }) => {
           <tbody>
           {tableData.map((task) => (
               <tr key={task._id} className="border-t border-gray-200">
-                <td className="my-3 mx-4 text-gray-700 text-[13px] line-clamp-1 overflow-hidden">{task.title}</td>
+                <td className="my-3 mx-4 text-gray-700 text-[13px] line-clamp-1 overflow-hidden">
+                  {task.title}
+                </td>
                 <td className="py-4 px-4">
                 <span className={`px-2 py-1 text-xs rounded inline-block ${getStatusBadgeColor(task.status)}`}>
                   {translateStatus(task.status)}
@@ -64,12 +76,12 @@ export const TaskListTable = ({ tableData }) => {
                 </span>
                 </td>
                 <td className="py-4 px-4 text-gray-700 text-[13px] text-nowrap hidden md:table-cell">
-                  {task.createdAt ? moment(task.createdAt).format('D MMM YYYY') : '—'}
+                  {formatDate(task.createdAt)}
                 </td>
               </tr>
           ))}
           </tbody>
         </table>
       </div>
-  )
-}
+  );
+};
