@@ -6,6 +6,7 @@ import { API_PATHS } from "../../utils/api-paths.js";
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { TaskStatusTabs } from "../../components/task-status-tabs.jsx";
 import { TaskCard } from "../../components/Cards/task-card.jsx";
+import {toast} from "react-toastify";
 
 // Маппинг для фильтрации и отображения
 const statusMap = {
@@ -49,7 +50,26 @@ export const ManageTasks = () => {
     const handleClick = (taskData) => {
         navigate(`/admin/create-task`, { state: { taskId: taskData._id } });
     };
+    const handleDownloadReport = async () => {
+        try {
+            const response = await axiosInstance.get(API_PATHS.REPORTS.EXPORT_TASKS, {
+                responseType: "blob",
+            });
 
+            // Create a URL for the blob
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "task_details.xlsx");
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Error downloading details:", error);
+            toast.error("Failed to download details. Please try again.");
+        }
+    };
     useEffect(() => {
         getAllTasks(filterStatus);
     }, [filterStatus]);
@@ -63,6 +83,7 @@ export const ManageTasks = () => {
 
                         <button
                             className="flex lg:hidden download-btn"
+                            onClick={handleDownloadReport}
                         >
                             <LuFileSpreadsheet className="text-lg" />
                             Скачать отчет
@@ -79,6 +100,7 @@ export const ManageTasks = () => {
 
                             <button
                                 className="hidden lg:flex download-btn"
+                                onClick={handleDownloadReport}
                             >
                                 <LuFileSpreadsheet className="text-lg" />
                                 Скачать отчет
