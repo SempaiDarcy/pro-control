@@ -13,27 +13,50 @@ const exportTasksReport = async (req, res) => {
         const worksheet = workbook.addWorksheet("Tasks Report");
 
         worksheet.columns = [
-            { header: "Task ID", key: "_id", width: 25 },
-            { header: "Title", key: "title", width: 30 },
-            { header: "Description", key: "description", width: 50 },
-            { header: "Priority", key: "priority", width: 15 },
-            { header: "Status", key: "status", width: 20 },
-            { header: "Due Date", key: "dueDate", width: 20 },
-            { header: "Assigned To", key: "assignedTo", width: 30 },
+            {header: "ID задачи", key: "_id", width: 25},
+            {header: "Название", key: "title", width: 30},
+            {header: "Описание", key: "description", width: 50},
+            {header: "Приоритет", key: "priority", width: 15},
+            {header: "Статус", key: "status", width: 20},
+            {header: "Срок", key: "dueDate", width: 20},
+            {header: "Назначено", key: "assignedTo", width: 30},
         ];
 
         tasks.forEach((task) => {
-            const assignedTo = task.assignedTo
-                .map((user) => `${user.name} (${user.email})`)
-                .join(", ");
+            let assignedTo;
+
+            if (Array.isArray(task.assignedTo)) {
+                assignedTo = task.assignedTo
+                    .map((user) => `${user.name} (${user.email})`)
+                    .join(", ");
+            } else if (task.assignedTo) {
+                assignedTo = `${task.assignedTo.name} (${task.assignedTo.email})`;
+            } else {
+                assignedTo = "Не назначено";
+            }
+
             worksheet.addRow({
                 _id: task._id,
                 title: task.title,
                 description: task.description,
-                priority: task.priority,
-                status: task.status,
-                dueDate: task.dueDate.toISOString().split("T")[0],
-                assignedTo: assignedTo || "Unassigned",
+                priority:
+                    task.priority === "High"
+                        ? "Высокий"
+                        : task.priority === "Medium"
+                            ? "Средний"
+                            : task.priority === "Low"
+                                ? "Низкий"
+                                : task.priority,
+                status:
+                    task.status === "Completed"
+                        ? "Завершено"
+                        : task.status === "Pending"
+                            ? "Ожидает"
+                            : task.status === "In Progress"
+                                ? "В процессе"
+                                : task.status,
+                dueDate: task.dueDate?.toISOString().split("T")[0] || "",
+                assignedTo,
             });
         });
 
@@ -50,9 +73,7 @@ const exportTasksReport = async (req, res) => {
             res.end();
         });
     } catch (error) {
-        res
-            .status(500)
-            .json({ message: "Error exporting tasks", error: error.message });
+        res.status(500).json({message: "Ошибка при экспорте задач", error: error.message});
     }
 };
 
@@ -80,36 +101,35 @@ const exportUsersReport = async (req, res) => {
         });
 
         userTasks.forEach((task) => {
-            if (task.assignedTo) {
+            if (Array.isArray(task.assignedTo)) {
                 task.assignedTo.forEach((assignedUser) => {
-                    if (userTaskMap[assignedUser._id]) {
-                        userTaskMap[assignedUser._id].taskCount += 1;
-                        if (task.status === "Pending") {
-                            userTaskMap[assignedUser._id].pendingTasks += 1;
-                        } else if (task.status === "In Progress") {
-                            userTaskMap[assignedUser._id].inProgressTasks += 1;
-                        } else if (task.status === "Completed") {
-                            userTaskMap[assignedUser._id].completedTasks += 1;
-                        }
+                    const u = userTaskMap[assignedUser._id];
+                    if (u) {
+                        u.taskCount += 1;
+                        if (task.status === "Pending") u.pendingTasks += 1;
+                        else if (task.status === "In Progress") u.inProgressTasks += 1;
+                        else if (task.status === "Completed") u.completedTasks += 1;
                     }
                 });
+            } else if (task.assignedTo && userTaskMap[task.assignedTo._id]) {
+                const u = userTaskMap[task.assignedTo._id];
+                u.taskCount += 1;
+                if (task.status === "Pending") u.pendingTasks += 1;
+                else if (task.status === "In Progress") u.inProgressTasks += 1;
+                else if (task.status === "Completed") u.completedTasks += 1;
             }
         });
 
         const workbook = new excelJS.Workbook();
-        const worksheet = workbook.addWorksheet("User Task Report");
+        const worksheet = workbook.addWorksheet("Отчёт по пользователям");
 
         worksheet.columns = [
-            { header: "User Name", key: "name", width: 30 },
-            { header: "Email", key: "email", width: 40 },
-            { header: "Total Assigned Tasks", key: "taskCount", width: 20 },
-            { header: "Pending Tasks", key: "pendingTasks", width: 20 },
-            {
-                header: "In Progress Tasks",
-                key: "inProgressTasks",
-                width: 20,
-            },
-            { header: "Completed Tasks", key: "completedTasks", width: 20 },
+            {header: "Имя пользователя", key: "name", width: 30},
+            {header: "Email", key: "email", width: 40},
+            {header: "Всего задач", key: "taskCount", width: 20},
+            {header: "Ожидают", key: "pendingTasks", width: 20},
+            {header: "В процессе", key: "inProgressTasks", width: 20},
+            {header: "Завершено", key: "completedTasks", width: 20},
         ];
 
         Object.values(userTaskMap).forEach((user) => {
@@ -129,9 +149,7 @@ const exportUsersReport = async (req, res) => {
             res.end();
         });
     } catch (error) {
-        res
-            .status(500)
-            .json({ message: "Error exporting tasks", error: error.message });
+        res.status(500).json({message: "Ошибка при экспорте пользователей", error: error.message});
     }
 };
 
