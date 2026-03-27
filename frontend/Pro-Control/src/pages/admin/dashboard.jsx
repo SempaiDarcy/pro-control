@@ -5,7 +5,9 @@ import {DashboardLayout} from "../../components/layouts/dashboard-layout.jsx";
 import {useNavigate} from "react-router-dom";
 import axiosInstance from "../../utils/axios-instance.js";
 import {API_PATHS} from "../../utils/api-paths.js";
-import moment from "moment";
+
+import moment from "moment/min/moment-with-locales";
+
 import {addThousandsSeparator} from "../../utils/helper";
 import {InfoCard} from "../../components/Cards/info-card.jsx";
 import {LuArrowRight} from "react-icons/lu";
@@ -13,6 +15,7 @@ import {TaskListTable} from "../../components/task-list-table.jsx";
 import {CustomPieChart} from "../../components/charts/custom-pie-chart.jsx";
 import {CustomBarChart} from "../../components/charts/custom-bar-chart.jsx";
 
+// moment.locale("ru");
 const COLORS = ["#8D51FF", "#00B8DB", "#7BCE00"];
 
 export const Dashboard = () => {
@@ -64,7 +67,7 @@ export const Dashboard = () => {
     const onSeeMore = () => {
         navigate("/admin/tasks");
     };
-
+    console.log(moment.locale());
     useEffect(() => {
         getDashboardData();
 
@@ -81,7 +84,7 @@ export const Dashboard = () => {
                             Здравствуй, {user?.name}!
                         </h2>
                         <p className="text-xs md:text-[13px] text-gray-400 mt-1.5">
-                            {moment().format("dddd, Do MMM YYYY")}
+                            {moment().locale("ru").format("dddd, D MMMM YYYY, HH:mm")}
                         </p>
                     </div>
                 </div>
