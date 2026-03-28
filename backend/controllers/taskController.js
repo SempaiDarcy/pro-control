@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Task = require("../models/Task");
 const Project = require("../models/Project");
 
@@ -22,31 +23,83 @@ const populateTaskDetail = (query) =>
         .populate("project", "title status")
         .populate({ path: "activity.user", select: "name email profileImageUrl" });
 
+const TASK_STATUSES = ["Pending", "In Progress", "Completed"];
+
+const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const taskFilterParts = (req, { includeStatusFromQuery }) => {
+    const parts = [];
+    const { q, priority, project, assignedTo, overdue, status } = req.query;
+
+    if (req.user.role !== "admin") {
+        parts.push({ assignedTo: req.user._id });
+    }
+
+    if (req.user.role === "admin" && assignedTo && mongoose.Types.ObjectId.isValid(assignedTo)) {
+        parts.push({ assignedTo: new mongoose.Types.ObjectId(assignedTo) });
+    }
+
+    const qTrim = q != null ? String(q).trim() : "";
+    if (qTrim) {
+        const safe = escapeRegex(qTrim);
+        parts.push({
+            $or: [
+                { title: new RegExp(safe, "i") },
+                { description: new RegExp(safe, "i") },
+            ],
+        });
+    }
+
+    if (priority && ["Low", "Medium", "High"].includes(priority)) {
+        parts.push({ priority });
+    }
+
+    if (project && mongoose.Types.ObjectId.isValid(project)) {
+        parts.push({ project: new mongoose.Types.ObjectId(project) });
+    }
+
+    if (overdue === "true" || overdue === true) {
+        parts.push({ status: { $ne: "Completed" } });
+        parts.push({ dueDate: { $lt: new Date() } });
+    }
+
+    if (includeStatusFromQuery && status && TASK_STATUSES.includes(status)) {
+        parts.push({ status });
+    }
+
+    return parts;
+};
+
+const partsToMongoFilter = (parts) => {
+    if (parts.length === 0) return {};
+    if (parts.length === 1) return parts[0];
+    return { $and: parts };
+};
+
 // @desc    Get all tasks (Admin: all, User: only assigned tasks)
 // @route   GET /api/tasks/
 // @access  Private
 const getTasks = async (req, res) => {
     try {
-        const { status } = req.query;
-        let filter = {};
+        const summaryBaseParts = taskFilterParts(req, { includeStatusFromQuery: false });
+        const listParts = taskFilterParts(req, { includeStatusFromQuery: true });
 
-        if (status) {
-            filter.status = status;
+        const listFilter = partsToMongoFilter(listParts);
+        const sort = {};
+        if (req.query.sortBy === "dueDate") {
+            sort.dueDate = req.query.order === "asc" ? 1 : -1;
         }
 
-        let tasks;
+        let query = Task.find(listFilter)
+            .populate("assignedTo", "name email profileImageUrl")
+            .populate("project", "title status");
 
-        if (req.user.role === "admin") {
-            tasks = await Task.find(filter)
-                .populate("assignedTo", "name email profileImageUrl")
-                .populate("project", "title status");
-        } else {
-            tasks = await Task.find({ ...filter, assignedTo: req.user._id })
-                .populate("assignedTo", "name email profileImageUrl")
-                .populate("project", "title status");
+        if (Object.keys(sort).length > 0) {
+            query = query.sort(sort);
         }
 
-        // Add completed todoChecklist count to each task
+        let tasks = await query;
+
         tasks = await Promise.all(
             tasks.map(async (task) => {
                 const completedCount = task.todoChecklist.filter(
@@ -56,28 +109,19 @@ const getTasks = async (req, res) => {
             })
         );
 
-        // Status summary counts
-        const allTasks = await Task.countDocuments(
-            req.user.role === "admin" ? {} : { assignedTo: req.user._id }
+        const allTasks = await Task.countDocuments(partsToMongoFilter(summaryBaseParts));
+
+        const pendingTasks = await Task.countDocuments(
+            partsToMongoFilter([...summaryBaseParts, { status: "Pending" }])
         );
 
-        const pendingTasks = await Task.countDocuments({
-            ...filter,
-            status: "Pending",
-            ...(req.user.role !== "admin" && { assignedTo: req.user._id }),
-        });
+        const inProgressTasks = await Task.countDocuments(
+            partsToMongoFilter([...summaryBaseParts, { status: "In Progress" }])
+        );
 
-        const inProgressTasks = await Task.countDocuments({
-            ...filter,
-            status: "In Progress",
-            ...(req.user.role !== "admin" && { assignedTo: req.user._id }),
-        });
-
-        const completedTasks = await Task.countDocuments({
-            ...filter,
-            status: "Completed",
-            ...(req.user.role !== "admin" && { assignedTo: req.user._id }),
-        });
+        const completedTasks = await Task.countDocuments(
+            partsToMongoFilter([...summaryBaseParts, { status: "Completed" }])
+        );
 
         res.json({
             tasks,

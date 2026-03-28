@@ -74,12 +74,27 @@ export const TaskCard = ({
         });
     };
 
+    const isOverdue =
+        status !== "Completed" &&
+        dueDate &&
+        new Date(dueDate).getTime() < Date.now();
+
+    const leftBorderClass = isOverdue
+        ? "border-rose-500"
+        : status === "In Progress"
+            ? "border-cyan-500"
+            : status === "Completed"
+                ? "border-lime-500"
+                : "border-violet-500";
+
     return (
         <div
-            className="bg-white rounded-xl py-4 shadow-md shadow-gray-100 border border-gray-200/50 cursor-pointer"
+            className={`bg-white rounded-xl py-4 shadow-md shadow-gray-100 border cursor-pointer ${
+                isOverdue ? "border-rose-200/70 ring-1 ring-rose-100/80" : "border-gray-200/50"
+            }`}
             onClick={onClick}
         >
-            <div className="flex items-end gap-3 px-4">
+            <div className="flex flex-wrap items-end gap-2 px-4">
                 <div
                     className={`text-[11px] font-medium ${getStatusTagColor()} px-4 py-0.5 rounded`}
                 >
@@ -90,17 +105,14 @@ export const TaskCard = ({
                 >
                     {getPriorityText()}
                 </div>
+                {isOverdue ? (
+                    <div className="text-[11px] font-medium text-rose-600 bg-rose-50 border border-rose-200/80 px-3 py-0.5 rounded">
+                        Просрочено
+                    </div>
+                ) : null}
             </div>
 
-            <div
-                className={`px-4 border-l-[3px] ${
-                    status === "In Progress"
-                        ? "border-cyan-500"
-                        : status === "Completed"
-                            ? "border-lime-500"
-                            : "border-violet-500"
-                }`}
-            >
+            <div className={`px-4 border-l-[3px] ${leftBorderClass}`}>
                 <p className="text-sm font-medium text-gray-800 mt-4 line-clamp-2">
                     {title}
                 </p>
@@ -136,7 +148,11 @@ export const TaskCard = ({
 
                     <div>
                         <label className="text-xs text-gray-500">Дата сдачи</label>
-                        <p className="text-[13px] font-medium text-gray-900">
+                        <p
+                            className={`text-[13px] font-medium ${
+                                isOverdue ? "text-rose-600" : "text-gray-900"
+                            }`}
+                        >
                             {formatDate(dueDate)}
                         </p>
                     </div>
