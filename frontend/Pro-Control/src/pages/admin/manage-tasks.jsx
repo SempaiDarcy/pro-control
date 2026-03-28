@@ -163,124 +163,106 @@ export const ManageTasks = () => {
     return (
         <DashboardLayout activeMenu="Manage Tasks">
             <div className="my-5">
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-3 justify-between lg:justify-start">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-3 min-w-0">
                         <h2 className="text-xl md:text-xl font-medium">Мои задачи</h2>
-
-                        <div className="flex items-center gap-2 flex-wrap">
-                            <div className="inline-flex rounded-md border border-slate-100 overflow-hidden text-sm">
-                                <button
-                                    type="button"
-                                    className={`px-3 py-1.5 font-medium ${
-                                        viewMode === "list"
-                                            ? "bg-primary text-white"
-                                            : "bg-white text-gray-700"
-                                    }`}
-                                    onClick={() => setViewMode("list")}
-                                >
-                                    Список
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`px-3 py-1.5 font-medium border-l border-slate-100 ${
-                                        viewMode === "kanban"
-                                            ? "bg-primary text-white"
-                                            : "bg-white text-gray-700"
-                                    }`}
-                                    onClick={() => setViewMode("kanban")}
-                                >
-                                    Доска
-                                </button>
-                            </div>
-
+                        <div className="inline-flex rounded-md border border-slate-100 overflow-hidden text-sm shrink-0">
                             <button
-                                className="flex lg:hidden download-btn"
-                                onClick={handleDownloadReport}
+                                type="button"
+                                className={`px-3 py-1.5 font-medium ${
+                                    viewMode === "list"
+                                        ? "bg-primary text-white"
+                                        : "bg-white text-gray-700"
+                                }`}
+                                onClick={() => setViewMode("list")}
                             >
-                                <LuFileSpreadsheet className="text-lg" />
-                                Скачать отчет
+                                Список
+                            </button>
+                            <button
+                                type="button"
+                                className={`px-3 py-1.5 font-medium border-l border-slate-100 ${
+                                    viewMode === "kanban"
+                                        ? "bg-primary text-white"
+                                        : "bg-white text-gray-700"
+                                }`}
+                                onClick={() => setViewMode("kanban")}
+                            >
+                                Доска
                             </button>
                         </div>
                     </div>
-
-                    <div className="flex flex-col items-stretch lg:items-end gap-2 w-full lg:w-auto lg:min-w-[280px]">
-                        <div className="min-h-[52px] my-2 flex items-end justify-start lg:justify-end w-full">
-                            {viewMode === "list" ? (
-                                <TaskStatusTabs
-                                    tabs={tabs}
-                                    activeTab={filterStatus}
-                                    setActiveTab={setFilterStatus}
-                                />
-                            ) : (
-                                <div className="w-full" aria-hidden="true" />
-                            )}
-                        </div>
-                        <button
-                            className="hidden lg:inline-flex download-btn self-end"
-                            onClick={handleDownloadReport}
-                        >
-                            <LuFileSpreadsheet className="text-lg" />
-                            Скачать отчет
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        className="download-btn shrink-0"
+                        onClick={handleDownloadReport}
+                    >
+                        <LuFileSpreadsheet className="text-lg" />
+                        Скачать отчет
+                    </button>
                 </div>
 
-                <div className="mt-4">
-                    <div className="flex flex-wrap gap-3 items-end">
-                        <div className="w-full sm:max-w-xs md:w-72 shrink-0">
-                            <label className="text-xs font-medium text-slate-600">Поиск</label>
-                            <input
-                                className="form-input mt-1 w-full"
-                                placeholder="Найти по названию или описанию"
-                                value={searchQ}
-                                onChange={({ target }) => setSearchQ(target.value)}
-                                type="search"
-                                autoComplete="off"
-                            />
-                        </div>
-                        <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-44 min-w-0">
-                            <label className="text-xs font-medium text-slate-600">Приоритет</label>
-                            <SelectDropdown
-                                options={priorityOptions}
-                                value={priorityFilter}
-                                onChange={setPriorityFilter}
-                                placeholder="Все приоритеты"
-                            />
-                        </div>
-                        <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-48 min-w-0">
-                            <label className="text-xs font-medium text-slate-600">Проект</label>
-                            <SelectDropdown
-                                options={projectOptions}
-                                value={projectFilter}
-                                onChange={setProjectFilter}
-                                placeholder="Все проекты"
-                            />
-                        </div>
-                        <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-48 min-w-0">
-                            <label className="text-xs font-medium text-slate-600">Исполнитель</label>
-                            <SelectDropdown
-                                options={assigneeOptions}
-                                value={assigneeFilter}
-                                onChange={setAssigneeFilter}
-                                placeholder="Все исполнители"
-                            />
-                        </div>
-                        <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-52 min-w-0">
-                            <label className="text-xs font-medium text-slate-600">Сортировка по сроку</label>
-                            <SelectDropdown
-                                options={SORT_OPTIONS}
-                                value={sortDue}
-                                onChange={setSortDue}
-                                placeholder="По умолчанию"
-                            />
-                        </div>
-                        <div className="w-full sm:w-auto pb-1">
+                <div className="mt-3 flex flex-wrap gap-x-3 gap-y-2 items-end">
+                    <div className="w-full min-w-0 sm:max-w-[20rem] md:w-56 md:max-w-none shrink-0">
+                        <label className="text-xs font-medium text-slate-600">Поиск</label>
+                        <input
+                            className="form-input mt-1 w-full"
+                            placeholder="Найти по названию или описанию"
+                            value={searchQ}
+                            onChange={({ target }) => setSearchQ(target.value)}
+                            type="search"
+                            autoComplete="off"
+                        />
+                    </div>
+                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-40 min-w-0">
+                        <label className="text-xs font-medium text-slate-600">Приоритет</label>
+                        <SelectDropdown
+                            options={priorityOptions}
+                            value={priorityFilter}
+                            onChange={setPriorityFilter}
+                            placeholder="Все приоритеты"
+                        />
+                    </div>
+                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-44 min-w-0">
+                        <label className="text-xs font-medium text-slate-600">Проект</label>
+                        <SelectDropdown
+                            options={projectOptions}
+                            value={projectFilter}
+                            onChange={setProjectFilter}
+                            placeholder="Все проекты"
+                        />
+                    </div>
+                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-44 min-w-0">
+                        <label className="text-xs font-medium text-slate-600">Исполнитель</label>
+                        <SelectDropdown
+                            options={assigneeOptions}
+                            value={assigneeFilter}
+                            onChange={setAssigneeFilter}
+                            placeholder="Все исполнители"
+                        />
+                    </div>
+                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-48 min-w-0">
+                        <label className="text-xs font-medium text-slate-600">Сортировка по сроку</label>
+                        <SelectDropdown
+                            options={SORT_OPTIONS}
+                            value={sortDue}
+                            onChange={setSortDue}
+                            placeholder="По умолчанию"
+                        />
+                    </div>
+                    <div className="shrink-0 flex flex-col justify-end">
+                        <span
+                            className="text-xs font-medium text-slate-600 select-none invisible h-[14px] block"
+                            aria-hidden="true"
+                        >
+                            .
+                        </span>
+                        <div className="mt-2">
                             <button
                                 type="button"
                                 onClick={() => setOverdueOnly((v) => !v)}
-                                className={`text-sm font-medium px-3 py-2.5 rounded-md border transition-colors ${
+                                className={`text-sm font-medium px-3 py-2.5 rounded-md border transition-colors whitespace-nowrap ${
                                     overdueOnly
-                                        ? "text-rose-600 bg-rose-50 border-rose-200"
+                                        ? "text-rose-600 bg-rose-50 border-rose-200 shadow-sm"
                                         : "text-gray-700 bg-white border-slate-100"
                                 }`}
                             >
@@ -288,6 +270,19 @@ export const ManageTasks = () => {
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <div className="mt-2 min-h-[44px] flex items-end">
+                    {viewMode === "list" ? (
+                        <TaskStatusTabs
+                            tabs={tabs}
+                            activeTab={filterStatus}
+                            setActiveTab={setFilterStatus}
+                            wrapperClassName="my-0 w-full"
+                        />
+                    ) : (
+                        <div className="w-full" aria-hidden="true" />
+                    )}
                 </div>
 
                 {viewMode === "list" ? (

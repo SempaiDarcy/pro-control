@@ -129,95 +129,87 @@ export const MyTasks = () => {
     return (
         <DashboardLayout activeMenu="Мои задачи">
             <div className="my-5">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-xl md:text-xl font-medium">Мои задачи</h2>
-                        <div className="inline-flex rounded-md border border-slate-100 overflow-hidden text-sm">
-                            <button
-                                type="button"
-                                className={`px-3 py-1.5 font-medium ${
-                                    viewMode === "list"
-                                        ? "bg-primary text-white"
-                                        : "bg-white text-gray-700"
-                                }`}
-                                onClick={() => setViewMode("list")}
-                            >
-                                Список
-                            </button>
-                            <button
-                                type="button"
-                                className={`px-3 py-1.5 font-medium border-l border-slate-100 ${
-                                    viewMode === "kanban"
-                                        ? "bg-primary text-white"
-                                        : "bg-white text-gray-700"
-                                }`}
-                                onClick={() => setViewMode("kanban")}
-                            >
-                                Доска
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="min-h-[52px] my-2 flex items-end justify-start md:justify-end w-full md:w-auto md:min-w-[200px]">
-                        {viewMode === "list" ? (
-                            <TaskStatusTabs
-                                tabs={tabs}
-                                activeTab={filterStatus}
-                                setActiveTab={setFilterStatus}
-                            />
-                        ) : (
-                            <div className="w-full" aria-hidden="true" />
-                        )}
+                <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-xl md:text-xl font-medium">Мои задачи</h2>
+                    <div className="inline-flex rounded-md border border-slate-100 overflow-hidden text-sm shrink-0">
+                        <button
+                            type="button"
+                            className={`px-3 py-1.5 font-medium ${
+                                viewMode === "list"
+                                    ? "bg-primary text-white"
+                                    : "bg-white text-gray-700"
+                            }`}
+                            onClick={() => setViewMode("list")}
+                        >
+                            Список
+                        </button>
+                        <button
+                            type="button"
+                            className={`px-3 py-1.5 font-medium border-l border-slate-100 ${
+                                viewMode === "kanban"
+                                    ? "bg-primary text-white"
+                                    : "bg-white text-gray-700"
+                            }`}
+                            onClick={() => setViewMode("kanban")}
+                        >
+                            Доска
+                        </button>
                     </div>
                 </div>
 
-                <div className="mt-4">
-                    <div className="flex flex-wrap gap-3 items-end">
-                        <div className="w-full sm:max-w-xs md:w-72 shrink-0">
-                            <label className="text-xs font-medium text-slate-600">Поиск</label>
-                            <input
-                                className="form-input mt-1 w-full"
-                                placeholder="Найти по названию или описанию"
-                                value={searchQ}
-                                onChange={({ target }) => setSearchQ(target.value)}
-                                type="search"
-                                autoComplete="off"
-                            />
-                        </div>
-                        <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-44 min-w-0">
-                            <label className="text-xs font-medium text-slate-600">Приоритет</label>
-                            <SelectDropdown
-                                options={priorityOptions}
-                                value={priorityFilter}
-                                onChange={setPriorityFilter}
-                                placeholder="Все приоритеты"
-                            />
-                        </div>
-                        <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-48 min-w-0">
-                            <label className="text-xs font-medium text-slate-600">Проект</label>
-                            <SelectDropdown
-                                options={projectOptions}
-                                value={projectFilter}
-                                onChange={setProjectFilter}
-                                placeholder="Все проекты"
-                            />
-                        </div>
-                        <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-52 min-w-0">
-                            <label className="text-xs font-medium text-slate-600">Сортировка по сроку</label>
-                            <SelectDropdown
-                                options={SORT_OPTIONS}
-                                value={sortDue}
-                                onChange={setSortDue}
-                                placeholder="По умолчанию"
-                            />
-                        </div>
-                        <div className="w-full sm:w-auto pb-1">
+                <div className="mt-3 flex flex-wrap gap-x-3 gap-y-2 items-end">
+                    <div className="w-full min-w-0 sm:max-w-[20rem] md:w-56 md:max-w-none shrink-0">
+                        <label className="text-xs font-medium text-slate-600">Поиск</label>
+                        <input
+                            className="form-input mt-1 w-full"
+                            placeholder="Найти по названию или описанию"
+                            value={searchQ}
+                            onChange={({ target }) => setSearchQ(target.value)}
+                            type="search"
+                            autoComplete="off"
+                        />
+                    </div>
+                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-40 min-w-0">
+                        <label className="text-xs font-medium text-slate-600">Приоритет</label>
+                        <SelectDropdown
+                            options={priorityOptions}
+                            value={priorityFilter}
+                            onChange={setPriorityFilter}
+                            placeholder="Все приоритеты"
+                        />
+                    </div>
+                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-44 min-w-0">
+                        <label className="text-xs font-medium text-slate-600">Проект</label>
+                        <SelectDropdown
+                            options={projectOptions}
+                            value={projectFilter}
+                            onChange={setProjectFilter}
+                            placeholder="Все проекты"
+                        />
+                    </div>
+                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-48 min-w-0">
+                        <label className="text-xs font-medium text-slate-600">Сортировка по сроку</label>
+                        <SelectDropdown
+                            options={SORT_OPTIONS}
+                            value={sortDue}
+                            onChange={setSortDue}
+                            placeholder="По умолчанию"
+                        />
+                    </div>
+                    <div className="shrink-0 flex flex-col justify-end">
+                        <span
+                            className="text-xs font-medium text-slate-600 select-none invisible h-[14px] block"
+                            aria-hidden="true"
+                        >
+                            .
+                        </span>
+                        <div className="mt-2">
                             <button
                                 type="button"
                                 onClick={() => setOverdueOnly((v) => !v)}
-                                className={`text-sm font-medium px-3 py-2.5 rounded-md border transition-colors ${
+                                className={`text-sm font-medium px-3 py-2.5 rounded-md border transition-colors whitespace-nowrap ${
                                     overdueOnly
-                                        ? "text-rose-600 bg-rose-50 border-rose-200"
+                                        ? "text-rose-600 bg-rose-50 border-rose-200 shadow-sm"
                                         : "text-gray-700 bg-white border-slate-100"
                                 }`}
                             >
@@ -225,6 +217,19 @@ export const MyTasks = () => {
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <div className="mt-2 min-h-[44px] flex items-end">
+                    {viewMode === "list" ? (
+                        <TaskStatusTabs
+                            tabs={tabs}
+                            activeTab={filterStatus}
+                            setActiveTab={setFilterStatus}
+                            wrapperClassName="my-0 w-full"
+                        />
+                    ) : (
+                        <div className="w-full" aria-hidden="true" />
+                    )}
                 </div>
 
                 {viewMode === "list" ? (
