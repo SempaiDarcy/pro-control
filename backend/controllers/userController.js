@@ -44,6 +44,11 @@ const getUsers = async (req, res) => {
 // @access  Private
 const getUserById = async (req, res) => {
     try {
+        const isSelf = req.params.id === req.user._id.toString();
+        if (req.user.role !== "admin" && !isSelf) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
         const user = await User.findById(req.params.id).select("-password");
         if (!user) return res.status(404).json({ message: "User not found" });
         res.json(user);

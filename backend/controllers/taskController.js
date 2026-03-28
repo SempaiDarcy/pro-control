@@ -85,6 +85,13 @@ const getTaskById = async (req, res) => {
 
         if (!task) return res.status(404).json({ message: "Task not found" });
 
+        const isAssigned = task.assignedTo.some(
+            (userId) => userId.toString() === req.user._id.toString()
+        );
+        if (req.user.role !== "admin" && !isAssigned) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
         res.json(task);
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
