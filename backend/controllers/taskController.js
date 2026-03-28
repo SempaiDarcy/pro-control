@@ -1,4 +1,5 @@
 const Task = require("../models/Task");
+const Project = require("../models/Project");
 
 // @desc    Get all tasks (Admin: all, User: only assigned tasks)
 // @route   GET /api/tasks/
@@ -15,15 +16,13 @@ const getTasks = async (req, res) => {
         let tasks;
 
         if (req.user.role === "admin") {
-            tasks = await Task.find(filter).populate(
-                "assignedTo",
-                "name email profileImageUrl"
-            );
+            tasks = await Task.find(filter)
+                .populate("assignedTo", "name email profileImageUrl")
+                .populate("project", "title status");
         } else {
-            tasks = await Task.find({ ...filter, assignedTo: req.user._id }).populate(
-                "assignedTo",
-                "name email profileImageUrl"
-            );
+            tasks = await Task.find({ ...filter, assignedTo: req.user._id })
+                .populate("assignedTo", "name email profileImageUrl")
+                .populate("project", "title status");
         }
 
         // Add completed todoChecklist count to each task
@@ -32,7 +31,7 @@ const getTasks = async (req, res) => {
                 const completedCount = task.todoChecklist.filter(
                     (item) => item.completed
                 ).length;
-                return { ...task._doc, completedTodoCount: completedCount };
+                return { ...task.toObject(), completedTodoCount: completedCount };
             })
         );
 
@@ -78,10 +77,9 @@ const getTasks = async (req, res) => {
 // @access  Private
 const getTaskById = async (req, res) => {
     try {
-        const task = await Task.findById(req.params.id).populate(
-            "assignedTo",
-            "name email profileImageUrl"
-        );
+        const task = await Task.findById(req.params.id)
+            .populate("assignedTo", "name email profileImageUrl")
+            .populate("project", "title status");
 
         if (!task) return res.status(404).json({ message: "Task not found" });
 
@@ -111,12 +109,20 @@ const createTask = async (req, res) => {
             assignedTo,
             attachments,
             todoChecklist,
+            project,
         } = req.body;
 
         if (!Array.isArray(assignedTo)) {
             return res
                 .status(400)
                 .json({ message: "assignedTo must be an array of user IDs" });
+        }
+
+        if (project) {
+            const projectExists = await Project.findById(project);
+            if (!projectExists) {
+                return res.status(400).json({ message: "Invalid project" });
+            }
         }
 
         const task = await Task.create({
@@ -128,9 +134,14 @@ const createTask = async (req, res) => {
             createdBy: req.user._id,
             todoChecklist,
             attachments,
+            ...(project ? { project } : {}),
         });
 
-        res.status(201).json({ message: "Task created successfully", task });
+        const populated = await Task.findById(task._id)
+            .populate("assignedTo", "name email profileImageUrl")
+            .populate("project", "title status");
+
+        res.status(201).json({ message: "Task created successfully", task: populated });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
@@ -161,7 +172,24 @@ const updateTask = async (req, res) => {
             task.assignedTo = req.body.assignedTo;
         }
 
-        const updatedTask = await task.save();
+        if (Object.prototype.hasOwnProperty.call(req.body, "project")) {
+            const p = req.body.project;
+            if (p === null || p === "") {
+                task.project = null;
+            } else {
+                const projectExists = await Project.findById(p);
+                if (!projectExists) {
+                    return res.status(400).json({ message: "Invalid project" });
+                }
+                task.project = p;
+            }
+        }
+
+        await task.save();
+        const updatedTask = await Task.findById(task._id)
+            .populate("assignedTo", "name email profileImageUrl")
+            .populate("project", "title status");
+
         res.json({ message: "Task updated successfully", updatedTask });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
@@ -250,10 +278,9 @@ const updateTaskChecklist = async (req, res) => {
         }
 
         await task.save();
-        const updatedTask = await Task.findById(req.params.id).populate(
-            "assignedTo",
-            "name email profileImageUrl"
-        );
+        const updatedTask = await Task.findById(req.params.id)
+            .populate("assignedTo", "name email profileImageUrl")
+            .populate("project", "title status");
 
         res.json({ message: "Task checklist updated", task:updatedTask });
     } catch (error) {
@@ -313,7 +340,8 @@ const getDashboardData = async (req, res) => {
         const recentTasks = await Task.find()
             .sort({ createdAt: -1 })
             .limit(10)
-            .select("title status priority dueDate createdAt");
+            .select("title status priority dueDate createdAt project")
+            .populate("project", "title");
 
         res.status(200).json({
             statistics: {
@@ -383,7 +411,8 @@ const getUserDashboardData = async (req, res) => {
         const recentTasks = await Task.find({ assignedTo: userId })
             .sort({ createdAt: -1 })
             .limit(10)
-            .select("title status priority dueDate createdAt");
+            .select("title status priority dueDate createdAt project")
+            .populate("project", "title");
 
         res.status(200).json({
             statistics: {

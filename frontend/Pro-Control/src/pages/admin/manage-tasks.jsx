@@ -115,6 +115,7 @@ export const ManageTasks = () => {
                             key={item._id}
                             title={item.title}
                             description={item.description}
+                            projectTitle={item.project?.title}
                             priority={item.priority}
                             status={item.status}
                             progress={item.progress}

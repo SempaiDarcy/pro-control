@@ -16,6 +16,14 @@ export const API_PATHS = {
         DELETE_USER: (userId) => `/api/users/${userId}`, // Удалить пользователя
     },
 
+    PROJECTS: {
+        LIST: "/api/projects",
+        GET_BY_ID: (projectId) => `/api/projects/${projectId}`,
+        CREATE: "/api/projects",
+        UPDATE: (projectId) => `/api/projects/${projectId}`,
+        DELETE: (projectId) => `/api/projects/${projectId}`,
+    },
+
     TASKS: {
         GET_DASHBOARD_DATA: "/api/tasks/dashboard-data", // Получить данные для административной панели
         GET_USER_DASHBOARD_DATA: "/api/tasks/user-dashboard-data", // Получить данные панели пользователя

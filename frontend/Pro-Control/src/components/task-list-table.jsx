@@ -54,6 +54,7 @@ export const TaskListTable = ({ tableData }) => {
           <thead>
           <tr className="text-left">
             <th className="py-3 px-4 text-gray-800 font-medium text-[13px]">Название</th>
+            <th className="py-3 px-4 text-gray-800 font-medium text-[13px] hidden sm:table-cell">Проект</th>
             <th className="py-3 px-4 text-gray-800 font-medium text-[13px]">Статус</th>
             <th className="py-3 px-4 text-gray-800 font-medium text-[13px]">Приоритет</th>
             <th className="py-3 px-4 text-gray-800 font-medium text-[13px] hidden md:table-cell">Создано</th>
@@ -64,6 +65,9 @@ export const TaskListTable = ({ tableData }) => {
               <tr key={task._id} className="border-t border-gray-200">
                 <td className="my-3 mx-4 text-gray-700 text-[13px] line-clamp-1 overflow-hidden">
                   {task.title}
+                </td>
+                <td className="py-4 px-4 text-gray-600 text-[13px] line-clamp-1 max-w-[140px] hidden sm:table-cell">
+                  {task.project?.title || "—"}
                 </td>
                 <td className="py-4 px-4">
                 <span className={`px-2 py-1 text-xs rounded inline-block ${getStatusBadgeColor(task.status)}`}>
