@@ -21,8 +21,8 @@ const statusMap = {
 
 const SORT_OPTIONS = [
     { label: "По умолчанию", value: "" },
-    { label: "Срок (раньше — выше)", value: "dueAsc" },
-    { label: "Срок (позже — выше)", value: "dueDesc" },
+    { label: "По сроку: сначала ранние", value: "dueAsc" },
+    { label: "По сроку: сначала поздние", value: "dueDesc" },
 ];
 
 export const ManageTasks = () => {
@@ -163,8 +163,8 @@ export const ManageTasks = () => {
     return (
         <DashboardLayout activeMenu="Manage Tasks">
             <div className="my-5">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-3 justify-between">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-3 justify-between lg:justify-start">
                         <h2 className="text-xl md:text-xl font-medium">Мои задачи</h2>
 
                         <div className="flex items-center gap-2 flex-wrap">
@@ -203,22 +203,20 @@ export const ManageTasks = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
-                        {viewMode === "list" ? (
-                            <TaskStatusTabs
-                                tabs={tabs}
-                                activeTab={filterStatus}
-                                setActiveTab={setFilterStatus}
-                            />
-                        ) : (
-                            <p className="text-[12px] text-gray-500 max-w-xs lg:max-w-md">
-                                На доске три колонки по статусу; вкладка «Все / Ожидает…» не
-                                применяется. Остальные фильтры ниже действуют.
-                            </p>
-                        )}
-
+                    <div className="flex flex-col items-stretch lg:items-end gap-2 w-full lg:w-auto lg:min-w-[280px]">
+                        <div className="min-h-[52px] my-2 flex items-end justify-start lg:justify-end w-full">
+                            {viewMode === "list" ? (
+                                <TaskStatusTabs
+                                    tabs={tabs}
+                                    activeTab={filterStatus}
+                                    setActiveTab={setFilterStatus}
+                                />
+                            ) : (
+                                <div className="w-full" aria-hidden="true" />
+                            )}
+                        </div>
                         <button
-                            className="hidden lg:flex download-btn"
+                            className="hidden lg:inline-flex download-btn self-end"
                             onClick={handleDownloadReport}
                         >
                             <LuFileSpreadsheet className="text-lg" />
@@ -227,18 +225,19 @@ export const ManageTasks = () => {
                     </div>
                 </div>
 
-                <div className="mt-4 space-y-3">
-                    <div>
-                        <label className="text-xs font-medium text-slate-600">Поиск</label>
-                        <input
-                            className="form-input mt-1"
-                            placeholder="Название или описание"
-                            value={searchQ}
-                            onChange={({ target }) => setSearchQ(target.value)}
-                        />
-                    </div>
-
+                <div className="mt-4">
                     <div className="flex flex-wrap gap-3 items-end">
+                        <div className="w-full sm:max-w-xs md:w-72 shrink-0">
+                            <label className="text-xs font-medium text-slate-600">Поиск</label>
+                            <input
+                                className="form-input mt-1 w-full"
+                                placeholder="Найти по названию или описанию"
+                                value={searchQ}
+                                onChange={({ target }) => setSearchQ(target.value)}
+                                type="search"
+                                autoComplete="off"
+                            />
+                        </div>
                         <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-44 min-w-0">
                             <label className="text-xs font-medium text-slate-600">Приоритет</label>
                             <SelectDropdown
