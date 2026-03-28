@@ -151,14 +151,23 @@ export const TasksKanbanBoard = ({ tasks, onTaskOpen, onTaskStatusChange }) => {
                         </p>
                     </div>
                     <div className="min-h-[120px]">
-                        {grouped[col.status]?.map((task) => (
-                            <KanbanCard
-                                key={task._id}
-                                task={task}
-                                onOpen={onTaskOpen}
-                                onDragStart={handleDragStart}
-                            />
-                        ))}
+                        {grouped[col.status]?.length > 0 ? (
+                            grouped[col.status].map((task) => (
+                                <KanbanCard
+                                    key={task._id}
+                                    task={task}
+                                    onOpen={onTaskOpen}
+                                    onDragStart={handleDragStart}
+                                />
+                            ))
+                        ) : (
+                            <div className="flex min-h-[100px] flex-col items-center justify-center rounded-lg border border-dashed border-gray-200/90 bg-white/50 px-3 py-5 text-center">
+                                <p className="text-[13px] text-gray-600">Пока пусто</p>
+                                <p className="mt-1 text-[11px] text-gray-500">
+                                    Перетащите задачу сюда
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             ))}

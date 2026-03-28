@@ -158,9 +158,11 @@ export const MyTasks = () => {
                 </div>
 
                 <div className="mt-3 rounded-lg border border-slate-100 bg-white p-3 sm:p-4 shadow-sm shadow-gray-100/50">
-                    <div className="flex flex-col xl:flex-row gap-4 xl:gap-6 xl:items-end">
+                    <div className="flex flex-col xl:flex-row gap-4 xl:gap-5 2xl:gap-6 xl:items-end">
                         <div className="w-full xl:w-[min(100%,17.5rem)] xl:max-w-[20rem] shrink-0">
-                            <label className="text-xs font-medium text-slate-700">Поиск</label>
+                            <label className="text-xs font-semibold text-slate-800">
+                                Поиск
+                            </label>
                             <input
                                 className="form-input mt-1.5 w-full py-2"
                                 placeholder="Найти по названию или описанию"
@@ -171,9 +173,9 @@ export const MyTasks = () => {
                             />
                         </div>
                         <div className="min-w-0 flex-1 border-t border-slate-100 pt-3 xl:border-t-0 xl:pt-0 xl:border-l xl:border-slate-100 xl:pl-6">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-3 items-end">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-3 gap-y-3 2xl:gap-x-4 items-end">
                                 <div className="min-w-0">
-                                    <label className="text-xs font-medium text-slate-500">
+                                    <label className="text-xs font-medium text-slate-600">
                                         Приоритет
                                     </label>
                                     <SelectDropdown
@@ -185,7 +187,7 @@ export const MyTasks = () => {
                                     />
                                 </div>
                                 <div className="min-w-0">
-                                    <label className="text-xs font-medium text-slate-500">
+                                    <label className="text-xs font-medium text-slate-600">
                                         Проект
                                     </label>
                                     <SelectDropdown
@@ -197,7 +199,7 @@ export const MyTasks = () => {
                                     />
                                 </div>
                                 <div className="min-w-0">
-                                    <label className="text-xs font-medium text-slate-500">
+                                    <label className="text-xs font-medium text-slate-600">
                                         Сортировка по сроку
                                     </label>
                                     <SelectDropdown
@@ -208,9 +210,9 @@ export const MyTasks = () => {
                                         compact
                                     />
                                 </div>
-                                <div className="shrink-0 sm:col-span-2 lg:col-span-1 flex flex-col justify-end">
+                                <div className="shrink-0 sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1 flex flex-col justify-end">
                                     <span
-                                        className="text-xs font-medium text-slate-500 select-none invisible h-[14px] block"
+                                        className="text-xs font-medium text-slate-600 select-none invisible h-[14px] block"
                                         aria-hidden="true"
                                     >
                                         .
@@ -221,8 +223,8 @@ export const MyTasks = () => {
                                             onClick={() => setOverdueOnly((v) => !v)}
                                             className={`text-xs font-semibold px-3 py-2 rounded-md border transition-colors whitespace-nowrap w-full sm:w-auto ${
                                                 overdueOnly
-                                                    ? "text-rose-700 bg-rose-50 border-rose-300 ring-1 ring-rose-200/60"
-                                                    : "text-slate-600 bg-slate-50 border-slate-200 hover:bg-slate-100"
+                                                    ? "text-rose-700 bg-rose-50 border-rose-300 shadow-sm"
+                                                    : "text-slate-700 bg-transparent border-dashed border-slate-300 hover:border-slate-400 hover:bg-slate-50/80"
                                             }`}
                                         >
                                             Просроченные
