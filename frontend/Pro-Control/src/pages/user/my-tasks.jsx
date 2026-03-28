@@ -157,64 +157,79 @@ export const MyTasks = () => {
                     </div>
                 </div>
 
-                <div className="mt-3 flex flex-wrap gap-x-3 gap-y-2 items-end">
-                    <div className="w-full min-w-0 sm:max-w-[20rem] md:w-56 md:max-w-none shrink-0">
-                        <label className="text-xs font-medium text-slate-600">Поиск</label>
-                        <input
-                            className="form-input mt-1 w-full"
-                            placeholder="Найти по названию или описанию"
-                            value={searchQ}
-                            onChange={({ target }) => setSearchQ(target.value)}
-                            type="search"
-                            autoComplete="off"
-                        />
-                    </div>
-                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-40 min-w-0">
-                        <label className="text-xs font-medium text-slate-600">Приоритет</label>
-                        <SelectDropdown
-                            options={priorityOptions}
-                            value={priorityFilter}
-                            onChange={setPriorityFilter}
-                            placeholder="Все приоритеты"
-                        />
-                    </div>
-                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-44 min-w-0">
-                        <label className="text-xs font-medium text-slate-600">Проект</label>
-                        <SelectDropdown
-                            options={projectOptions}
-                            value={projectFilter}
-                            onChange={setProjectFilter}
-                            placeholder="Все проекты"
-                        />
-                    </div>
-                    <div className="w-full sm:w-[calc(50%-0.375rem)] md:w-48 min-w-0">
-                        <label className="text-xs font-medium text-slate-600">Сортировка по сроку</label>
-                        <SelectDropdown
-                            options={SORT_OPTIONS}
-                            value={sortDue}
-                            onChange={setSortDue}
-                            placeholder="По умолчанию"
-                        />
-                    </div>
-                    <div className="shrink-0 flex flex-col justify-end">
-                        <span
-                            className="text-xs font-medium text-slate-600 select-none invisible h-[14px] block"
-                            aria-hidden="true"
-                        >
-                            .
-                        </span>
-                        <div className="mt-2">
-                            <button
-                                type="button"
-                                onClick={() => setOverdueOnly((v) => !v)}
-                                className={`text-sm font-medium px-3 py-2.5 rounded-md border transition-colors whitespace-nowrap ${
-                                    overdueOnly
-                                        ? "text-rose-600 bg-rose-50 border-rose-200 shadow-sm"
-                                        : "text-gray-700 bg-white border-slate-100"
-                                }`}
-                            >
-                                Просроченные
-                            </button>
+                <div className="mt-3 rounded-lg border border-slate-100 bg-white p-3 sm:p-4 shadow-sm shadow-gray-100/50">
+                    <div className="flex flex-col xl:flex-row gap-4 xl:gap-6 xl:items-end">
+                        <div className="w-full xl:w-[min(100%,17.5rem)] xl:max-w-[20rem] shrink-0">
+                            <label className="text-xs font-medium text-slate-700">Поиск</label>
+                            <input
+                                className="form-input mt-1.5 w-full py-2"
+                                placeholder="Найти по названию или описанию"
+                                value={searchQ}
+                                onChange={({ target }) => setSearchQ(target.value)}
+                                type="search"
+                                autoComplete="off"
+                            />
+                        </div>
+                        <div className="min-w-0 flex-1 border-t border-slate-100 pt-3 xl:border-t-0 xl:pt-0 xl:border-l xl:border-slate-100 xl:pl-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-3 items-end">
+                                <div className="min-w-0">
+                                    <label className="text-xs font-medium text-slate-500">
+                                        Приоритет
+                                    </label>
+                                    <SelectDropdown
+                                        options={priorityOptions}
+                                        value={priorityFilter}
+                                        onChange={setPriorityFilter}
+                                        placeholder="Все приоритеты"
+                                        compact
+                                    />
+                                </div>
+                                <div className="min-w-0">
+                                    <label className="text-xs font-medium text-slate-500">
+                                        Проект
+                                    </label>
+                                    <SelectDropdown
+                                        options={projectOptions}
+                                        value={projectFilter}
+                                        onChange={setProjectFilter}
+                                        placeholder="Все проекты"
+                                        compact
+                                    />
+                                </div>
+                                <div className="min-w-0">
+                                    <label className="text-xs font-medium text-slate-500">
+                                        Сортировка по сроку
+                                    </label>
+                                    <SelectDropdown
+                                        options={SORT_OPTIONS}
+                                        value={sortDue}
+                                        onChange={setSortDue}
+                                        placeholder="По умолчанию"
+                                        compact
+                                    />
+                                </div>
+                                <div className="shrink-0 sm:col-span-2 lg:col-span-1 flex flex-col justify-end">
+                                    <span
+                                        className="text-xs font-medium text-slate-500 select-none invisible h-[14px] block"
+                                        aria-hidden="true"
+                                    >
+                                        .
+                                    </span>
+                                    <div className="mt-1.5">
+                                        <button
+                                            type="button"
+                                            onClick={() => setOverdueOnly((v) => !v)}
+                                            className={`text-xs font-semibold px-3 py-2 rounded-md border transition-colors whitespace-nowrap w-full sm:w-auto ${
+                                                overdueOnly
+                                                    ? "text-rose-700 bg-rose-50 border-rose-300 ring-1 ring-rose-200/60"
+                                                    : "text-slate-600 bg-slate-50 border-slate-200 hover:bg-slate-100"
+                                            }`}
+                                        >
+                                            Просроченные
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
