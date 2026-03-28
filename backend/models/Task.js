@@ -5,6 +5,16 @@ const todoSchema = new mongoose.Schema({
     completed: { type: Boolean, default: false },
 });
 
+const activityEntrySchema = new mongoose.Schema(
+    {
+        action: { type: String, required: true },
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+        message: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+    },
+    { _id: true }
+);
+
 const taskSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
@@ -16,7 +26,8 @@ const taskSchema = new mongoose.Schema(
         assignedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         attachments: [{ type: String }],
-        todoChecklist: [todoSchema], 
+        todoChecklist: [todoSchema],
+        activity: { type: [activityEntrySchema], default: [] },
         progress: { type: Number, default: 0 }
         
     },

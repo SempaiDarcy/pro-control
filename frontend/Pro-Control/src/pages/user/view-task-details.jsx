@@ -4,6 +4,7 @@ import axiosInstance from "../../utils/axios-instance.js";
 import { API_PATHS } from "../../utils/api-paths.js";
 import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { AvatarGroup } from "../../components/avatar-group.jsx";
+import { TaskActivitySection } from "../../components/task-activity-section.jsx";
 import { LuSquareArrowOutUpRight } from "react-icons/lu";
 
 export const ViewTaskDetails = () => {
@@ -179,6 +180,8 @@ export const ViewTaskDetails = () => {
                                     ))}
                                 </div>
                             )}
+
+                            <TaskActivitySection entries={task?.activity} />
                         </div>
                     </div>
                 )}

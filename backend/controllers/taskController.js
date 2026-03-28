@@ -1,6 +1,27 @@
 const Task = require("../models/Task");
 const Project = require("../models/Project");
 
+const isUserAssignedToTask = (task, userId) =>
+    task.assignedTo.some((u) => {
+        const id = u?._id != null ? u._id.toString() : u.toString();
+        return id === userId.toString();
+    });
+
+const statusLabelRu = (status) => {
+    const map = {
+        Pending: "Ожидает",
+        "In Progress": "В работе",
+        Completed: "Завершено",
+    };
+    return map[status] || status;
+};
+
+const populateTaskDetail = (query) =>
+    query
+        .populate("assignedTo", "name email profileImageUrl")
+        .populate("project", "title status")
+        .populate({ path: "activity.user", select: "name email profileImageUrl" });
+
 // @desc    Get all tasks (Admin: all, User: only assigned tasks)
 // @route   GET /api/tasks/
 // @access  Private
@@ -77,15 +98,11 @@ const getTasks = async (req, res) => {
 // @access  Private
 const getTaskById = async (req, res) => {
     try {
-        const task = await Task.findById(req.params.id)
-            .populate("assignedTo", "name email profileImageUrl")
-            .populate("project", "title status");
+        const task = await populateTaskDetail(Task.findById(req.params.id));
 
         if (!task) return res.status(404).json({ message: "Task not found" });
 
-        const isAssigned = task.assignedTo.some(
-            (userId) => userId.toString() === req.user._id.toString()
-        );
+        const isAssigned = isUserAssignedToTask(task, req.user._id);
         if (req.user.role !== "admin" && !isAssigned) {
             return res.status(403).json({ message: "Not authorized" });
         }
@@ -135,11 +152,16 @@ const createTask = async (req, res) => {
             todoChecklist,
             attachments,
             ...(project ? { project } : {}),
+            activity: [
+                {
+                    action: "created",
+                    user: req.user._id,
+                    message: "Задача создана",
+                },
+            ],
         });
 
-        const populated = await Task.findById(task._id)
-            .populate("assignedTo", "name email profileImageUrl")
-            .populate("project", "title status");
+        const populated = await populateTaskDetail(Task.findById(task._id));
 
         res.status(201).json({ message: "Task created successfully", task: populated });
     } catch (error) {
@@ -155,6 +177,17 @@ const updateTask = async (req, res) => {
         const task = await Task.findById(req.params.id);
 
         if (!task) return res.status(404).json({ message: "Task not found" });
+
+        const prev = {
+            title: task.title,
+            description: task.description,
+            priority: task.priority,
+            dueDate: task.dueDate ? new Date(task.dueDate).getTime() : null,
+            assignedToIds: [...task.assignedTo].map((id) => id.toString()).sort(),
+            projectId: task.project ? task.project.toString() : "",
+            todoStr: JSON.stringify(task.todoChecklist || []),
+            attStr: JSON.stringify(task.attachments || []),
+        };
 
         task.title = req.body.title || task.title;
         task.description = req.body.description || task.description;
@@ -185,10 +218,51 @@ const updateTask = async (req, res) => {
             }
         }
 
+        const nextAssigneeIds = [...task.assignedTo].map((id) => id.toString()).sort();
+        const assigneesChanged =
+            req.body.assignedTo &&
+            JSON.stringify(prev.assignedToIds) !== JSON.stringify(nextAssigneeIds);
+
+        const nextProjectId = task.project ? task.project.toString() : "";
+        const projectChanged =
+            Object.prototype.hasOwnProperty.call(req.body, "project") &&
+            prev.projectId !== nextProjectId;
+
+        const nextDue = task.dueDate ? new Date(task.dueDate).getTime() : null;
+        const coreChanged =
+            task.title !== prev.title ||
+            task.description !== prev.description ||
+            task.priority !== prev.priority ||
+            nextDue !== prev.dueDate ||
+            JSON.stringify(task.todoChecklist || []) !== prev.todoStr ||
+            JSON.stringify(task.attachments || []) !== prev.attStr;
+
+        if (!task.activity) task.activity = [];
+
+        if (assigneesChanged) {
+            task.activity.push({
+                action: "assignees_changed",
+                user: req.user._id,
+                message: "Изменены исполнители",
+            });
+        }
+        if (projectChanged) {
+            task.activity.push({
+                action: "project_changed",
+                user: req.user._id,
+                message: "Изменён проект",
+            });
+        }
+        if (coreChanged) {
+            task.activity.push({
+                action: "updated",
+                user: req.user._id,
+                message: "Обновлены данные задачи",
+            });
+        }
+
         await task.save();
-        const updatedTask = await Task.findById(task._id)
-            .populate("assignedTo", "name email profileImageUrl")
-            .populate("project", "title status");
+        const updatedTask = await populateTaskDetail(Task.findById(task._id));
 
         res.json({ message: "Task updated successfully", updatedTask });
     } catch (error) {
@@ -220,14 +294,13 @@ const updateTaskStatus = async (req, res) => {
         const task = await Task.findById(req.params.id);
         if (!task) return res.status(404).json({ message: "Task not found" });
 
-        const isAssigned = task.assignedTo.some(
-            (userId) => userId.toString() === req.user._id.toString()
-        );
+        const isAssigned = isUserAssignedToTask(task, req.user._id);
 
         if (!isAssigned && req.user.role !== "admin") {
             return res.status(403).json({ message: "Not authorized" });
         }
 
+        const oldStatus = task.status;
         task.status = req.body.status || task.status;
 
         if (task.status === "Completed") {
@@ -235,8 +308,19 @@ const updateTaskStatus = async (req, res) => {
             task.progress = 100;
         }
 
+        if (!task.activity) task.activity = [];
+
+        if (oldStatus !== task.status) {
+            task.activity.push({
+                action: "status_changed",
+                user: req.user._id,
+                message: `Статус: ${statusLabelRu(oldStatus)} → ${statusLabelRu(task.status)}`,
+            });
+        }
+
         await task.save();
-        res.json({ message: "Task status updated", task });
+        const updated = await populateTaskDetail(Task.findById(task._id));
+        res.json({ message: "Task status updated", task: updated });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
@@ -252,12 +336,13 @@ const updateTaskChecklist = async (req, res) => {
 
         if (!task) return res.status(404).json({ message: "Task not found" });
 
-        if (!task.assignedTo.includes(req.user._id) && req.user.role !== "admin") {
+        if (!isUserAssignedToTask(task, req.user._id) && req.user.role !== "admin") {
             return res
                 .status(403)
                 .json({ message: "Not authorized to update checklist" });
         }
 
+        const prevTodoStr = JSON.stringify(task.todoChecklist || []);
         task.todoChecklist = todoChecklist; // Replace with updated checklist
 
         // Auto-update progress based on checklist completion
@@ -277,12 +362,20 @@ const updateTaskChecklist = async (req, res) => {
             task.status = "Pending";
         }
 
-        await task.save();
-        const updatedTask = await Task.findById(req.params.id)
-            .populate("assignedTo", "name email profileImageUrl")
-            .populate("project", "title status");
+        if (!task.activity) task.activity = [];
 
-        res.json({ message: "Task checklist updated", task:updatedTask });
+        if (prevTodoStr !== JSON.stringify(task.todoChecklist || [])) {
+            task.activity.push({
+                action: "checklist_updated",
+                user: req.user._id,
+                message: "Обновлён чеклист",
+            });
+        }
+
+        await task.save();
+        const updatedTask = await populateTaskDetail(Task.findById(req.params.id));
+
+        res.json({ message: "Task checklist updated", task: updatedTask });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
