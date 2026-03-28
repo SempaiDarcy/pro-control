@@ -345,7 +345,16 @@ const updateTaskStatus = async (req, res) => {
         }
 
         const oldStatus = task.status;
-        task.status = req.body.status || task.status;
+        if (
+            req.body.status !== undefined &&
+            req.body.status !== null &&
+            req.body.status !== ""
+        ) {
+            if (!TASK_STATUSES.includes(req.body.status)) {
+                return res.status(400).json({ message: "Invalid status" });
+            }
+            task.status = req.body.status;
+        }
 
         if (task.status === "Completed") {
             task.todoChecklist.forEach((item) => (item.completed = true));

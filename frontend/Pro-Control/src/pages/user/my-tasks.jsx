@@ -7,6 +7,8 @@ import { TaskStatusTabs } from "../../components/task-status-tabs.jsx";
 import { TaskCard } from "../../components/Cards/task-card.jsx";
 import { SelectDropdown } from "../../components/inputs/select-dropdown.jsx";
 import { PRIORITY_DATA } from "../../utils/data.js";
+import { TasksKanbanBoard } from "../../components/tasks-kanban-board.jsx";
+import toast from "react-hot-toast";
 
 const statusMap = {
     Все: "",
@@ -31,6 +33,7 @@ export const MyTasks = () => {
     const [overdueOnly, setOverdueOnly] = useState(false);
     const [sortDue, setSortDue] = useState("");
     const [projects, setProjects] = useState([]);
+    const [viewMode, setViewMode] = useState("list");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -48,7 +51,7 @@ export const MyTasks = () => {
     const buildQueryParams = () => {
         const params = {};
         const st = statusMap[filterStatus];
-        if (st) params.status = st;
+        if (st && viewMode !== "kanban") params.status = st;
         if (searchQ.trim()) params.q = searchQ.trim();
         if (priorityFilter) params.priority = priorityFilter;
         if (projectFilter) params.project = projectFilter;
@@ -86,13 +89,28 @@ export const MyTasks = () => {
         }
     };
 
-    const handleClick = (taskId) => {
-        navigate(`/user/task-details/${taskId}`);
+    const handleOpenTask = (taskOrId) => {
+        const id = typeof taskOrId === "object" ? taskOrId._id : taskOrId;
+        navigate(`/user/task-details/${id}`);
+    };
+
+    const handleKanbanStatusChange = async (taskId, newStatus) => {
+        try {
+            await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK_STATUS(taskId), {
+                status: newStatus,
+            });
+            await getAllTasks();
+        } catch (error) {
+            const msg =
+                error.response?.data?.message || "Не удалось изменить статус задачи";
+            toast.error(msg);
+        }
     };
 
     useEffect(() => {
         getAllTasks();
     }, [
+        viewMode,
         filterStatus,
         searchQ,
         priorityFilter,
@@ -111,14 +129,47 @@ export const MyTasks = () => {
     return (
         <DashboardLayout activeMenu="Мои задачи">
             <div className="my-5">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <h2 className="text-xl md:text-xl font-medium">Мои задачи</h2>
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:flex-wrap">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <h2 className="text-xl md:text-xl font-medium">Мои задачи</h2>
+                        <div className="inline-flex rounded-md border border-slate-100 overflow-hidden text-sm">
+                            <button
+                                type="button"
+                                className={`px-3 py-1.5 font-medium ${
+                                    viewMode === "list"
+                                        ? "bg-primary text-white"
+                                        : "bg-white text-gray-700"
+                                }`}
+                                onClick={() => setViewMode("list")}
+                            >
+                                Список
+                            </button>
+                            <button
+                                type="button"
+                                className={`px-3 py-1.5 font-medium border-l border-slate-100 ${
+                                    viewMode === "kanban"
+                                        ? "bg-primary text-white"
+                                        : "bg-white text-gray-700"
+                                }`}
+                                onClick={() => setViewMode("kanban")}
+                            >
+                                Доска
+                            </button>
+                        </div>
+                    </div>
 
-                    <TaskStatusTabs
-                        tabs={tabs}
-                        activeTab={filterStatus}
-                        setActiveTab={setFilterStatus}
-                    />
+                    {viewMode === "list" ? (
+                        <TaskStatusTabs
+                            tabs={tabs}
+                            activeTab={filterStatus}
+                            setActiveTab={setFilterStatus}
+                        />
+                    ) : (
+                        <p className="text-[12px] text-gray-500 max-w-md">
+                            На доске три колонки по статусу; вкладка статуса не применяется.
+                            Фильтры ниже действуют.
+                        </p>
+                    )}
                 </div>
 
                 <div className="mt-4 space-y-3">
@@ -176,26 +227,34 @@ export const MyTasks = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    {allTasks?.map((item) => (
-                        <TaskCard
-                            key={item._id}
-                            title={item.title}
-                            description={item.description}
-                            projectTitle={item.project?.title}
-                            priority={item.priority}
-                            status={item.status}
-                            progress={item.progress}
-                            createdAt={item.createdAt}
-                            dueDate={item.dueDate}
-                            assignedTo={item.assignedTo?.map((user) => user.profileImageUrl)}
-                            attachmentCount={item.attachments?.length || 0}
-                            completedTodoCount={item.completedTodoCount || 0}
-                            todoChecklist={item.todoChecklist || []}
-                            onClick={() => handleClick(item._id)}
-                        />
-                    ))}
-                </div>
+                {viewMode === "list" ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        {allTasks?.map((item) => (
+                            <TaskCard
+                                key={item._id}
+                                title={item.title}
+                                description={item.description}
+                                projectTitle={item.project?.title}
+                                priority={item.priority}
+                                status={item.status}
+                                progress={item.progress}
+                                createdAt={item.createdAt}
+                                dueDate={item.dueDate}
+                                assignedTo={item.assignedTo?.map((user) => user.profileImageUrl)}
+                                attachmentCount={item.attachments?.length || 0}
+                                completedTodoCount={item.completedTodoCount || 0}
+                                todoChecklist={item.todoChecklist || []}
+                                onClick={() => handleOpenTask(item._id)}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <TasksKanbanBoard
+                        tasks={allTasks}
+                        onTaskOpen={handleOpenTask}
+                        onTaskStatusChange={handleKanbanStatusChange}
+                    />
+                )}
             </div>
         </DashboardLayout>
     );

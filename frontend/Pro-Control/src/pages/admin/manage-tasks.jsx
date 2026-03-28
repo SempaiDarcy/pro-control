@@ -6,9 +6,11 @@ import { API_PATHS } from "../../utils/api-paths.js";
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { TaskStatusTabs } from "../../components/task-status-tabs.jsx";
 import { TaskCard } from "../../components/Cards/task-card.jsx";
-import { toast } from "react-toastify";
+import { toast as toastify } from "react-toastify";
+import toast from "react-hot-toast";
 import { SelectDropdown } from "../../components/inputs/select-dropdown.jsx";
 import { PRIORITY_DATA } from "../../utils/data.js";
+import { TasksKanbanBoard } from "../../components/tasks-kanban-board.jsx";
 
 const statusMap = {
     Все: "",
@@ -35,6 +37,7 @@ export const ManageTasks = () => {
     const [sortDue, setSortDue] = useState("");
     const [projects, setProjects] = useState([]);
     const [members, setMembers] = useState([]);
+    const [viewMode, setViewMode] = useState("list");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -56,7 +59,7 @@ export const ManageTasks = () => {
     const buildQueryParams = () => {
         const params = {};
         const st = statusMap[filterStatus];
-        if (st) params.status = st;
+        if (st && viewMode !== "kanban") params.status = st;
         if (searchQ.trim()) params.q = searchQ.trim();
         if (priorityFilter) params.priority = priorityFilter;
         if (projectFilter) params.project = projectFilter;
@@ -115,13 +118,27 @@ export const ManageTasks = () => {
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Error downloading details:", error);
-            toast.error("Failed to download details. Please try again.");
+            toastify.error("Failed to download details. Please try again.");
+        }
+    };
+
+    const handleKanbanStatusChange = async (taskId, newStatus) => {
+        try {
+            await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK_STATUS(taskId), {
+                status: newStatus,
+            });
+            await getAllTasks();
+        } catch (error) {
+            const msg =
+                error.response?.data?.message || "Не удалось изменить статус задачи";
+            toast.error(msg);
         }
     };
 
     useEffect(() => {
         getAllTasks();
     }, [
+        viewMode,
         filterStatus,
         searchQ,
         priorityFilter,
@@ -147,24 +164,58 @@ export const ManageTasks = () => {
         <DashboardLayout activeMenu="Manage Tasks">
             <div className="my-5">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-3 justify-between">
                         <h2 className="text-xl md:text-xl font-medium">Мои задачи</h2>
 
-                        <button
-                            className="flex lg:hidden download-btn"
-                            onClick={handleDownloadReport}
-                        >
-                            <LuFileSpreadsheet className="text-lg" />
-                            Скачать отчет
-                        </button>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <div className="inline-flex rounded-md border border-slate-100 overflow-hidden text-sm">
+                                <button
+                                    type="button"
+                                    className={`px-3 py-1.5 font-medium ${
+                                        viewMode === "list"
+                                            ? "bg-primary text-white"
+                                            : "bg-white text-gray-700"
+                                    }`}
+                                    onClick={() => setViewMode("list")}
+                                >
+                                    Список
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`px-3 py-1.5 font-medium border-l border-slate-100 ${
+                                        viewMode === "kanban"
+                                            ? "bg-primary text-white"
+                                            : "bg-white text-gray-700"
+                                    }`}
+                                    onClick={() => setViewMode("kanban")}
+                                >
+                                    Доска
+                                </button>
+                            </div>
+
+                            <button
+                                className="flex lg:hidden download-btn"
+                                onClick={handleDownloadReport}
+                            >
+                                <LuFileSpreadsheet className="text-lg" />
+                                Скачать отчет
+                            </button>
+                        </div>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3">
-                        <TaskStatusTabs
-                            tabs={tabs}
-                            activeTab={filterStatus}
-                            setActiveTab={setFilterStatus}
-                        />
+                        {viewMode === "list" ? (
+                            <TaskStatusTabs
+                                tabs={tabs}
+                                activeTab={filterStatus}
+                                setActiveTab={setFilterStatus}
+                            />
+                        ) : (
+                            <p className="text-[12px] text-gray-500 max-w-xs lg:max-w-md">
+                                На доске три колонки по статусу; вкладка «Все / Ожидает…» не
+                                применяется. Остальные фильтры ниже действуют.
+                            </p>
+                        )}
 
                         <button
                             className="hidden lg:flex download-btn"
@@ -240,26 +291,34 @@ export const ManageTasks = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    {allTasks?.map((item) => (
-                        <TaskCard
-                            key={item._id}
-                            title={item.title}
-                            description={item.description}
-                            projectTitle={item.project?.title}
-                            priority={item.priority}
-                            status={item.status}
-                            progress={item.progress}
-                            createdAt={item.createdAt}
-                            dueDate={item.dueDate}
-                            assignedTo={item.assignedTo?.map((user) => user.profileImageUrl)}
-                            attachmentCount={item.attachments?.length || 0}
-                            completedTodoCount={item.completedTodoCount || 0}
-                            todoChecklist={item.todoChecklist || []}
-                            onClick={() => handleClick(item)}
-                        />
-                    ))}
-                </div>
+                {viewMode === "list" ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        {allTasks?.map((item) => (
+                            <TaskCard
+                                key={item._id}
+                                title={item.title}
+                                description={item.description}
+                                projectTitle={item.project?.title}
+                                priority={item.priority}
+                                status={item.status}
+                                progress={item.progress}
+                                createdAt={item.createdAt}
+                                dueDate={item.dueDate}
+                                assignedTo={item.assignedTo?.map((user) => user.profileImageUrl)}
+                                attachmentCount={item.attachments?.length || 0}
+                                completedTodoCount={item.completedTodoCount || 0}
+                                todoChecklist={item.todoChecklist || []}
+                                onClick={() => handleClick(item)}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <TasksKanbanBoard
+                        tasks={allTasks}
+                        onTaskOpen={handleClick}
+                        onTaskStatusChange={handleKanbanStatusChange}
+                    />
+                )}
             </div>
         </DashboardLayout>
     );
