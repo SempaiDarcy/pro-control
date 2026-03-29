@@ -7,6 +7,7 @@ import { API_PATHS } from "../../utils/api-paths.js";
 import { Progress } from "../../components/progress.jsx";
 import { AvatarGroup } from "../../components/avatar-group.jsx";
 import toast from "react-hot-toast";
+import { LuFolders } from "react-icons/lu";
 
 const STATUS_LABEL = {
     Planning: "Планирование",
@@ -131,11 +132,18 @@ export const ProjectsOverview = () => {
                 {loading ? (
                     <p className="text-sm text-gray-500">Загрузка…</p>
                 ) : projects.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/50 px-6 py-12 text-center">
-                        <p className="text-[15px] font-medium text-gray-700">Пока нет проектов</p>
-                        <p className="text-[13px] text-gray-500 mt-2 max-w-md mx-auto">
-                            Когда проекты появятся в системе, они отобразятся здесь со статусом,
-                            дедлайном и прогрессом по задачам.
+                    <div className="flex w-full flex-col items-center rounded-xl border border-gray-200/80 bg-white px-8 py-14 text-center shadow-sm shadow-gray-100/60">
+                        <div
+                            className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-400"
+                            aria-hidden
+                        >
+                            <LuFolders className="h-7 w-7" strokeWidth={1.5} />
+                        </div>
+                        <h3 className="text-[15px] font-medium text-gray-900">
+                            Проектов пока нет
+                        </h3>
+                        <p className="text-[13px] text-gray-500 mt-2 leading-relaxed">
+                            Здесь появятся карточки со сроками и прогрессом по задачам.
                         </p>
                     </div>
                 ) : (
