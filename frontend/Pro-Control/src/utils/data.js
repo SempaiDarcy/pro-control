@@ -4,6 +4,7 @@ import {
     LuClipboardCheck,
     LuSquarePlus,
     LuLogOut,
+    LuFolders,
 } from "react-icons/lu";
 
 export const SIDE_MENU_DATA = [
@@ -12,6 +13,12 @@ export const SIDE_MENU_DATA = [
         label: "Панель управления",
         icon: LuLayoutDashboard,
         path: "/admin/dashboard",
+    },
+    {
+        id: "01b",
+        label: "Проекты",
+        icon: LuFolders,
+        path: "/admin/projects",
     },
     {
         id: "02",
@@ -45,6 +52,12 @@ export const SIDE_MENU_USER_DATA = [
         label: "Панель управления",
         icon: LuLayoutDashboard,
         path: "/user/dashboard",
+    },
+    {
+        id: "01b",
+        label: "Проекты",
+        icon: LuFolders,
+        path: "/user/projects",
     },
     {
         id: "02",
