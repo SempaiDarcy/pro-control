@@ -46,7 +46,7 @@ export const ManageUsers = () => {
     }, []);
 
     return (
-        <DashboardLayout activeMenu="Team Members">
+        <DashboardLayout activeMenu="/admin/users">
             <div className="mt-5 mb-10">
                 <div className="flex md:flex-row md:items-center justify-between">
                     <h2 className="text-xl md:text-xl font-medium">Участники команды</h2>

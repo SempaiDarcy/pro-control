@@ -161,7 +161,7 @@ export const ManageTasks = () => {
     const priorityOptions = [{ label: "Все приоритеты", value: "" }, ...PRIORITY_DATA];
 
     return (
-        <DashboardLayout activeMenu="Manage Tasks">
+        <DashboardLayout activeMenu="/admin/tasks">
             <div className="my-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-3 min-w-0">

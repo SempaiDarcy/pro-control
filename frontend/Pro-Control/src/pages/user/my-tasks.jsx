@@ -127,7 +127,7 @@ export const MyTasks = () => {
     const priorityOptions = [{ label: "Все приоритеты", value: "" }, ...PRIORITY_DATA];
 
     return (
-        <DashboardLayout activeMenu="Мои задачи">
+        <DashboardLayout activeMenu="/user/tasks">
             <div className="my-5">
                 <div className="flex flex-wrap items-center gap-3">
                     <h2 className="text-xl font-semibold tracking-tight text-app-heading md:text-xl">

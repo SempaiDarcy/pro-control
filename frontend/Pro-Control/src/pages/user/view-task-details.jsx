@@ -105,7 +105,7 @@ export const ViewTaskDetails = () => {
     }, [id]);
 
     return (
-        <DashboardLayout activeMenu="Мои задачи">
+        <DashboardLayout activeMenu="/user/tasks">
             <div className="mt-5">
                 {task && (
                     <div className="grid grid-cols-1 md:grid-cols-4 mt-4">

@@ -196,7 +196,7 @@ export const CreateTask = () => {
     }, [taskId]);
 
     return (
-        <DashboardLayout activeMenu="Создать задачу">
+        <DashboardLayout activeMenu="/admin/create-task">
             <div className="mt-5">
                 <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
                     <div className="form-card col-span-3">

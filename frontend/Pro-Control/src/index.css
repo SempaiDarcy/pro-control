@@ -27,6 +27,31 @@
         font-family: var(--font-sans);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        scrollbar-gutter: stable;
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #d4d4d8 #f4f4f5;
+    }
+
+    *::-webkit-scrollbar {
+        width: 9px;
+        height: 9px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: #f4f4f5;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: #d4d4d8;
+        border-radius: 9999px;
+        border: 2px solid #f4f4f5;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background-color: #a1a1aa;
     }
 
     body {
@@ -41,7 +66,7 @@
 }
 
 .btn-primary {
-    @apply w-full text-sm font-medium text-white bg-primary shadow-lg shadow-purple-600/5 p-[10px] rounded-md my-1 hover:bg-blue-600/15 hover:text-blue-600 cursor-pointer;
+    @apply my-1 w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .card {

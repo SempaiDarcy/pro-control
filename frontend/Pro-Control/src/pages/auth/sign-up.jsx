@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { ProfilePhotoSelector } from "../../components/inputs/profile-photo-selector.jsx";
 import { validateEmail } from "../../utils/helper";
-import { Input } from "../../components/Inputs/Input";
+import { Input } from "../../components/inputs/input.jsx";
 import { Link, useNavigate } from "react-router-dom";
 
 import { AuthLayout } from "../../components/layouts/auth-layout.jsx";

@@ -76,7 +76,7 @@ export const Dashboard = () => {
     }, []);
 
     return (
-        <DashboardLayout activeMenu="Dashboard">
+        <DashboardLayout activeMenu="/admin/dashboard">
             <div className="card my-5">
                 <div>
                     <div className="col-span-3">
