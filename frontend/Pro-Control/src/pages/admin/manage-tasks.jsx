@@ -169,7 +169,7 @@ export const ManageTasks = () => {
                         <div className="inline-flex rounded-md border border-slate-100 overflow-hidden text-sm shrink-0">
                             <button
                                 type="button"
-                                className={`px-3 py-1.5 font-medium ${
+                                className={`cursor-pointer px-3 py-1.5 font-medium ${
                                     viewMode === "list"
                                         ? "bg-primary text-white"
                                         : "bg-white text-gray-700"
@@ -180,7 +180,7 @@ export const ManageTasks = () => {
                             </button>
                             <button
                                 type="button"
-                                className={`px-3 py-1.5 font-medium border-l border-slate-100 ${
+                                className={`cursor-pointer px-3 py-1.5 font-medium border-l border-slate-100 ${
                                     viewMode === "kanban"
                                         ? "bg-primary text-white"
                                         : "bg-white text-gray-700"
@@ -228,6 +228,7 @@ export const ManageTasks = () => {
                                         onChange={setPriorityFilter}
                                         placeholder="Все приоритеты"
                                         compact
+                                        closeOnSignal={viewMode}
                                     />
                                 </div>
                                 <div className="min-w-0">
@@ -240,6 +241,7 @@ export const ManageTasks = () => {
                                         onChange={setProjectFilter}
                                         placeholder="Все проекты"
                                         compact
+                                        closeOnSignal={viewMode}
                                     />
                                 </div>
                                 <div className="min-w-0">
@@ -252,6 +254,7 @@ export const ManageTasks = () => {
                                         onChange={setAssigneeFilter}
                                         placeholder="Все исполнители"
                                         compact
+                                        closeOnSignal={viewMode}
                                     />
                                 </div>
                                 <div className="min-w-0">
@@ -264,6 +267,7 @@ export const ManageTasks = () => {
                                         onChange={setSortDue}
                                         placeholder="По умолчанию"
                                         compact
+                                        closeOnSignal={viewMode}
                                     />
                                 </div>
                                 <div className="shrink-0 sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1 flex flex-col justify-end">
