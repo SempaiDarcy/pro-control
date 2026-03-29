@@ -11,6 +11,7 @@ import {SignUp} from "./pages/auth/sign-up.jsx";
 import {Dashboard} from "./pages/admin/dashboard.jsx";
 import {ManageTasks} from "./pages/admin/manage-tasks.jsx";
 import {CreateTask} from "./pages/admin/create-task.jsx";
+import {CreateProject} from "./pages/admin/create-project.jsx";
 import {ManageUsers} from "./pages/admin/manage-users.jsx";
 
 import {UserDashboard} from "./pages/user/user-dashboard.jsx";
@@ -35,6 +36,7 @@ function App() {
                         <Route element={<PrivateRoute allowedRoles={["admin"]}/>}>
                             <Route path="/admin/dashboard" element={<Dashboard/>}/>
                             <Route path="/admin/projects" element={<ProjectsOverview/>}/>
+                            <Route path="/admin/create-project" element={<CreateProject/>}/>
                             <Route path="/admin/deadlines" element={<DeadlinesWorkspace/>}/>
                             <Route path="/admin/tasks" element={<ManageTasks/>}/>
                             <Route path="/admin/create-task" element={<CreateTask/>}/>

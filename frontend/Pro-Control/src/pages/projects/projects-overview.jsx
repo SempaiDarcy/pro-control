@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user-context.jsx";
 import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { useUserAuth } from "../../hooks/use-user-auth.jsx";
@@ -97,6 +98,7 @@ const ProjectCard = ({ project }) => {
 export const ProjectsOverview = () => {
     useUserAuth();
     const { user } = useContext(UserContext);
+    const navigate = useNavigate();
     const menuPath = user?.role === "admin" ? "/admin/projects" : "/user/projects";
 
     const [projects, setProjects] = useState([]);
@@ -122,11 +124,24 @@ export const ProjectsOverview = () => {
     return (
         <DashboardLayout activeMenu={menuPath}>
             <div className="my-5">
-                <div className="mb-5">
-                    <h2 className="text-xl md:text-2xl font-medium text-gray-900">Проекты</h2>
-                    <p className="text-[13px] text-gray-500 mt-1">
-                        Обзор проектов, сроки и прогресс по задачам
-                    </p>
+                <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h2 className="text-xl md:text-2xl font-medium text-gray-900">
+                            Проекты
+                        </h2>
+                        <p className="text-[13px] text-gray-500 mt-1">
+                            Обзор проектов, сроки и прогресс по задачам
+                        </p>
+                    </div>
+                    {user?.role === "admin" ? (
+                        <button
+                            type="button"
+                            className="add-btn !w-auto shrink-0 self-start"
+                            onClick={() => navigate("/admin/create-project")}
+                        >
+                            Создать проект
+                        </button>
+                    ) : null}
                 </div>
 
                 {loading ? (
