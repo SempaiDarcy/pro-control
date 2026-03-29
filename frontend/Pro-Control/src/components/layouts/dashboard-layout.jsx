@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { UserContext } from "../../context/user-context.jsx";
 import { SideMenu } from "./side-menu.jsx";
 import { Navbar } from "./navbar.jsx";
@@ -6,6 +7,7 @@ import { Navbar } from "./navbar.jsx";
 const SIDEBAR_STORAGE_KEY = "pc-sidebar-collapsed";
 
 export const DashboardLayout = ({ children, activeMenu }) => {
+    const { pathname } = useLocation();
     const { user } = useContext(UserContext);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -18,7 +20,7 @@ export const DashboardLayout = ({ children, activeMenu }) => {
 
     useEffect(() => {
         setMobileOpen(false);
-    }, [activeMenu]);
+    }, [pathname]);
 
     useEffect(() => {
         try {

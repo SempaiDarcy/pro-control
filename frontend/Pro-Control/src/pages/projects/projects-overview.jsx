@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user-context.jsx";
-import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { useUserAuth } from "../../hooks/use-user-auth.jsx";
 import axiosInstance from "../../utils/axios-instance.js";
 import { API_PATHS } from "../../utils/api-paths.js";
@@ -122,8 +121,6 @@ export const ProjectsOverview = () => {
     useUserAuth();
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
-    const menuPath = user?.role === "admin" ? "/admin/projects" : "/user/projects";
-
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -145,8 +142,7 @@ export const ProjectsOverview = () => {
     }, []);
 
     return (
-        <DashboardLayout activeMenu={menuPath}>
-            <div className="my-5">
+        <div className="my-5">
                 <div className="overflow-hidden rounded-2xl border border-app-border bg-app-surface shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
                     <header className="border-b border-app-border bg-app-surface px-6 pb-6 pt-7 md:px-8">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -201,6 +197,5 @@ export const ProjectsOverview = () => {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
     );
 };

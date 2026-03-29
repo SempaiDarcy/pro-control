@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../utils/axios-instance.js";
 import { API_PATHS } from "../../utils/api-paths.js";
-import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { AvatarGroup } from "../../components/avatar-group.jsx";
 import { TaskActivitySection } from "../../components/task-activity-section.jsx";
 import { LuSquareArrowOutUpRight } from "react-icons/lu";
@@ -105,8 +104,7 @@ export const ViewTaskDetails = () => {
     }, [id]);
 
     return (
-        <DashboardLayout activeMenu="/user/tasks">
-            <div className="mt-5">
+        <div className="mt-5">
                 {task && (
                     <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
                         <div className="form-card col-span-3">
@@ -186,7 +184,6 @@ export const ViewTaskDetails = () => {
                     </div>
                 )}
             </div>
-        </DashboardLayout>
     );
 };
 

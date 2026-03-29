@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { useUserAuth } from "../../hooks/use-user-auth.jsx";
 import axiosInstance from "../../utils/axios-instance.js";
 import { API_PATHS } from "../../utils/api-paths.js";
@@ -69,8 +68,7 @@ export const CreateProject = () => {
     };
 
     return (
-        <DashboardLayout activeMenu="/admin/projects">
-            <div className="mt-5">
+        <div className="mt-5">
                 <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
                     <div className="form-card col-span-3">
                         <h2 className="text-xl md:text-xl font-medium">Создать проект</h2>
@@ -184,6 +182,5 @@ export const CreateProject = () => {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
     );
 };

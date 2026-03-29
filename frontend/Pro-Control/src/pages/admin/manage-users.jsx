@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { API_PATHS } from "../../utils/api-paths.js";
 import axiosInstance from "../../utils/axios-instance.js";
 import { LuFileSpreadsheet } from "react-icons/lu";
@@ -46,8 +45,7 @@ export const ManageUsers = () => {
     }, []);
 
     return (
-        <DashboardLayout activeMenu="/admin/users">
-            <div className="mt-5 mb-10">
+        <div className="mt-5 mb-10">
                 <div className="flex md:flex-row md:items-center justify-between">
                     <h2 className="text-xl md:text-xl font-medium">Участники команды</h2>
 
@@ -66,6 +64,5 @@ export const ManageUsers = () => {
                     ))}
                 </div>
             </div>
-        </DashboardLayout>
     );
 };

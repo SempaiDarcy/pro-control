@@ -1,7 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user-context.jsx";
-import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { useUserAuth } from "../../hooks/use-user-auth.jsx";
 import axiosInstance from "../../utils/axios-instance.js";
 import { API_PATHS } from "../../utils/api-paths.js";
@@ -431,8 +430,6 @@ export const DeadlinesWorkspace = () => {
     useUserAuth();
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
-    const menuPath = user?.role === "admin" ? "/admin/deadlines" : "/user/deadlines";
-
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -523,5 +520,5 @@ export const DeadlinesWorkspace = () => {
         </>
     );
 
-    return <DashboardLayout activeMenu={menuPath}>{body}</DashboardLayout>;
+    return body;
 };

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axios-instance.js";
 import { API_PATHS } from "../../utils/api-paths.js";
@@ -127,8 +126,7 @@ export const MyTasks = () => {
     const priorityOptions = [{ label: "Все приоритеты", value: "" }, ...PRIORITY_DATA];
 
     return (
-        <DashboardLayout activeMenu="/user/tasks">
-            <div className="my-5">
+        <div className="my-5">
                 <div className="flex flex-wrap items-center gap-3">
                     <h2 className="text-xl font-semibold tracking-tight text-app-heading md:text-xl">
                         Мои задачи
@@ -283,6 +281,5 @@ export const MyTasks = () => {
                     />
                 )}
             </div>
-        </DashboardLayout>
     );
 };

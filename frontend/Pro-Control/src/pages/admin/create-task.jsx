@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {DashboardLayout} from "../../components/layouts/dashboard-layout.jsx";
 import {PRIORITY_DATA} from "../../utils/data";
 import axiosInstance from "../../utils/axios-instance";
 import {API_PATHS} from "../../utils/api-paths";
@@ -196,7 +195,7 @@ export const CreateTask = () => {
     }, [taskId]);
 
     return (
-        <DashboardLayout activeMenu="/admin/create-task">
+        <>
             <div className="mt-5">
                 <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
                     <div className="form-card col-span-3">
@@ -340,6 +339,6 @@ export const CreateTask = () => {
                     onDelete={() => deleteTask()}
                 />
             </Modal>
-        </DashboardLayout>
+        </>
     );
 };

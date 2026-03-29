@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useUserAuth } from "../../hooks/use-user-auth.jsx";
 import { UserContext } from "../../context/user-context.jsx";
-import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axios-instance.js";
 import { API_PATHS } from "../../utils/api-paths.js";
@@ -77,7 +76,7 @@ export const UserDashboard = () => {
     }, []);
 
     return (
-        <DashboardLayout activeMenu="/user/dashboard">
+        <>
             <div className="card my-5">
                 <div>
                     <div className="col-span-3">
@@ -156,6 +155,6 @@ export const UserDashboard = () => {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 };
