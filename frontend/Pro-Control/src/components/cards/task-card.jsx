@@ -89,8 +89,10 @@ export const TaskCard = ({
 
     return (
         <div
-            className={`bg-white rounded-xl py-4 shadow-md shadow-gray-100 border cursor-pointer ${
-                isOverdue ? "border-rose-200/70 ring-1 ring-rose-100/80" : "border-gray-200/50"
+            className={`bg-app-surface rounded-xl border py-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] cursor-pointer transition-[box-shadow,border-color] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] ${
+                isOverdue
+                    ? "border-rose-200/80 ring-1 ring-rose-100/70"
+                    : "border-app-border"
             }`}
             onClick={onClick}
         >
@@ -113,23 +115,23 @@ export const TaskCard = ({
             </div>
 
             <div className={`px-4 border-l-[3px] ${leftBorderClass}`}>
-                <p className="text-sm font-medium text-gray-800 mt-4 line-clamp-2">
+                <p className="text-sm font-medium text-app-heading mt-4 line-clamp-2">
                     {title}
                 </p>
 
                 {projectTitle ? (
-                    <p className="text-[11px] text-gray-500 mt-1 font-medium">
+                    <p className="text-[11px] text-app-muted mt-1 font-medium">
                         Проект: {projectTitle}
                     </p>
                 ) : null}
 
-                <p className="text-xs text-gray-500 mt-1.5 line-clamp-2 leading-[18px]">
+                <p className="text-xs text-app-muted mt-1.5 line-clamp-2 leading-[18px]">
                     {description}
                 </p>
 
-                <p className="text-[13px] text-gray-700/80 font-medium mt-2 mb-2 leading-[18px]">
+                <p className="text-[13px] text-app-heading/85 font-medium mt-2 mb-2 leading-[18px]">
                     Выполнено задач:{" "}
-                    <span className="font-semibold text-gray-700">
+                    <span className="font-semibold text-app-heading">
             {completedTodoCount} / {todoChecklist.length || 0}
           </span>
                 </p>
@@ -140,17 +142,17 @@ export const TaskCard = ({
             <div className="px-4">
                 <div className="flex items-center justify-between my-1">
                     <div>
-                        <label className="text-xs text-gray-500">Дата начала</label>
-                        <p className="text-[13px] font-medium text-gray-900">
+                        <label className="text-xs text-app-muted">Дата начала</label>
+                        <p className="text-[13px] font-medium text-app-heading">
                             {formatDate(createdAt)}
                         </p>
                     </div>
 
                     <div>
-                        <label className="text-xs text-gray-500">Дата сдачи</label>
+                        <label className="text-xs text-app-muted">Дата сдачи</label>
                         <p
                             className={`text-[13px] font-medium ${
-                                isOverdue ? "text-rose-600" : "text-gray-900"
+                                isOverdue ? "text-rose-600" : "text-app-heading"
                             }`}
                         >
                             {formatDate(dueDate)}
@@ -164,7 +166,7 @@ export const TaskCard = ({
                     {attachmentCount > 0 && (
                         <div className="flex items-center gap-2 bg-blue-50 px-2.5 py-1.5 rounded-lg">
                             <LuPaperclip className="text-primary" />
-                            <span className="text-xs text-gray-900">{attachmentCount}</span>
+                            <span className="text-xs text-app-heading">{attachmentCount}</span>
                         </div>
                     )}
                 </div>

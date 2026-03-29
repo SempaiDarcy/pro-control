@@ -140,13 +140,13 @@ export const TasksKanbanBoard = ({ tasks, onTaskOpen, onTaskStatusChange }) => {
             {COLUMNS.map((col) => (
                 <div
                     key={col.status}
-                    className="flex-1 min-w-[260px] max-w-md rounded-xl border border-gray-100 bg-gray-50/60 p-2"
+                    className="flex-1 min-w-[260px] max-w-md rounded-xl border border-app-border bg-app-border-muted/50 p-2"
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, col.status)}
                 >
-                    <div className="px-2 py-2 mb-2 border-b border-gray-100/80">
-                        <h3 className="text-[13px] font-medium text-gray-800">{col.title}</h3>
-                        <p className="text-[11px] text-gray-500 mt-0.5">
+                    <div className="mb-2 border-b border-app-border-muted px-2 py-2">
+                        <h3 className="text-[13px] font-semibold text-app-heading">{col.title}</h3>
+                        <p className="mt-0.5 text-[11px] text-app-muted">
                             {grouped[col.status]?.length || 0} задач
                         </p>
                     </div>
@@ -161,9 +161,9 @@ export const TasksKanbanBoard = ({ tasks, onTaskOpen, onTaskStatusChange }) => {
                                 />
                             ))
                         ) : (
-                            <div className="flex min-h-[100px] flex-col items-center justify-center rounded-lg border border-dashed border-gray-200/90 bg-white/50 px-3 py-5 text-center">
-                                <p className="text-[13px] text-gray-600">Пока пусто</p>
-                                <p className="mt-1 text-[11px] text-gray-500">
+                            <div className="flex min-h-[100px] flex-col items-center justify-center rounded-lg border border-dashed border-app-border/80 bg-app-surface/70 px-3 py-5 text-center">
+                                <p className="text-[13px] text-app-heading">Пока пусто</p>
+                                <p className="mt-1 text-[11px] text-app-muted">
                                     Перетащите задачу сюда
                                 </p>
                             </div>

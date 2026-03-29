@@ -130,14 +130,16 @@ export const MyTasks = () => {
         <DashboardLayout activeMenu="Мои задачи">
             <div className="my-5">
                 <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-xl md:text-xl font-medium">Мои задачи</h2>
-                    <div className="inline-flex rounded-md border border-slate-100 overflow-hidden text-sm shrink-0">
+                    <h2 className="text-xl font-semibold tracking-tight text-app-heading md:text-xl">
+                        Мои задачи
+                    </h2>
+                    <div className="inline-flex shrink-0 rounded-xl border border-app-border bg-app-border-muted p-1 text-sm shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]">
                         <button
                             type="button"
-                            className={`cursor-pointer px-3 py-1.5 font-medium ${
+                            className={`cursor-pointer rounded-lg px-4 py-2 font-semibold transition-all ${
                                 viewMode === "list"
-                                    ? "bg-primary text-white"
-                                    : "bg-white text-gray-700"
+                                    ? "bg-app-surface text-app-heading shadow-sm ring-1 ring-black/[0.06]"
+                                    : "text-app-muted hover:bg-app-surface/70 hover:text-app-heading"
                             }`}
                             onClick={() => setViewMode("list")}
                         >
@@ -145,10 +147,10 @@ export const MyTasks = () => {
                         </button>
                         <button
                             type="button"
-                            className={`cursor-pointer px-3 py-1.5 font-medium border-l border-slate-100 ${
+                            className={`cursor-pointer rounded-lg px-4 py-2 font-semibold transition-all ${
                                 viewMode === "kanban"
-                                    ? "bg-primary text-white"
-                                    : "bg-white text-gray-700"
+                                    ? "bg-app-surface text-app-heading shadow-sm ring-1 ring-black/[0.06]"
+                                    : "text-app-muted hover:bg-app-surface/70 hover:text-app-heading"
                             }`}
                             onClick={() => setViewMode("kanban")}
                         >
@@ -157,10 +159,10 @@ export const MyTasks = () => {
                     </div>
                 </div>
 
-                <div className="mt-3 rounded-lg border border-slate-100 bg-white p-3 sm:p-4 shadow-sm shadow-gray-100/50">
+                <div className="mt-3 rounded-xl border border-app-border bg-app-surface p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:p-4">
                     <div className="flex flex-col xl:flex-row gap-4 xl:gap-5 2xl:gap-6 xl:items-end">
                         <div className="w-full xl:w-[min(100%,17.5rem)] xl:max-w-[20rem] shrink-0">
-                            <label className="text-xs font-semibold text-slate-800">
+                            <label className="text-xs font-semibold text-app-heading">
                                 Поиск
                             </label>
                             <input
@@ -172,10 +174,10 @@ export const MyTasks = () => {
                                 autoComplete="off"
                             />
                         </div>
-                        <div className="min-w-0 flex-1 border-t border-slate-100 pt-3 xl:border-t-0 xl:pt-0 xl:border-l xl:border-slate-100 xl:pl-6">
+                        <div className="min-w-0 flex-1 border-t border-app-border-muted pt-3 xl:border-t-0 xl:border-l xl:border-app-border-muted xl:pl-6 xl:pt-0">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-3 gap-y-3 2xl:gap-x-4 items-end">
                                 <div className="min-w-0">
-                                    <label className="text-xs font-medium text-slate-600">
+                                    <label className="text-xs font-medium text-app-muted">
                                         Приоритет
                                     </label>
                                     <SelectDropdown
@@ -188,7 +190,7 @@ export const MyTasks = () => {
                                     />
                                 </div>
                                 <div className="min-w-0">
-                                    <label className="text-xs font-medium text-slate-600">
+                                    <label className="text-xs font-medium text-app-muted">
                                         Проект
                                     </label>
                                     <SelectDropdown
@@ -201,7 +203,7 @@ export const MyTasks = () => {
                                     />
                                 </div>
                                 <div className="min-w-0">
-                                    <label className="text-xs font-medium text-slate-600">
+                                    <label className="text-xs font-medium text-app-muted">
                                         Сортировка по сроку
                                     </label>
                                     <SelectDropdown
@@ -215,7 +217,7 @@ export const MyTasks = () => {
                                 </div>
                                 <div className="shrink-0 sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1 flex flex-col justify-end">
                                     <span
-                                        className="text-xs font-medium text-slate-600 select-none invisible h-[14px] block"
+                                        className="text-xs font-medium text-app-muted select-none invisible h-[14px] block"
                                         aria-hidden="true"
                                     >
                                         .
@@ -227,7 +229,7 @@ export const MyTasks = () => {
                                             className={`text-xs font-semibold px-3 py-2 rounded-md border transition-colors whitespace-nowrap w-full sm:w-auto ${
                                                 overdueOnly
                                                     ? "text-rose-700 bg-rose-50 border-rose-300 shadow-sm"
-                                                    : "text-slate-700 bg-transparent border-dashed border-slate-300 hover:border-slate-400 hover:bg-slate-50/80"
+                                                    : "text-app-muted bg-transparent border-dashed border-app-border hover:border-app-muted hover:bg-app-border-muted/60"
                                             }`}
                                         >
                                             Просроченные

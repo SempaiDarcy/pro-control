@@ -74,12 +74,12 @@ const bucketByDeadline = (tasks) => {
 const priorityClass = (p) => {
     switch (p) {
         case "Low":
-            return "text-emerald-600 bg-emerald-50 border-emerald-200/70";
+            return "text-emerald-700 bg-emerald-50 border-emerald-200/80";
         case "Medium":
-            return "text-amber-600 bg-amber-50 border-amber-200/70";
+            return "text-amber-800 bg-amber-50 border-amber-200/80";
         case "High":
         default:
-            return "text-rose-600 bg-rose-50 border-rose-200/70";
+            return "text-rose-700 bg-rose-50 border-rose-200/80";
     }
 };
 
@@ -99,12 +99,12 @@ const priorityLabel = (p) => {
 const statusClass = (s) => {
     switch (s) {
         case "In Progress":
-            return "text-cyan-600 bg-cyan-50 border-cyan-200/70";
+            return "text-cyan-800 bg-cyan-50 border-cyan-200/80";
         case "Completed":
-            return "text-lime-600 bg-lime-50 border-lime-200/70";
+            return "text-lime-800 bg-lime-50 border-lime-200/80";
         case "Pending":
         default:
-            return "text-violet-600 bg-violet-50 border-violet-200/70";
+            return "text-violet-800 bg-violet-50 border-violet-200/80";
     }
 };
 
@@ -136,47 +136,52 @@ const DeadlineTaskRow = ({ task, overdueAccent, onOpen }) => {
         <button
             type="button"
             onClick={() => onOpen(task)}
-            className={`w-full text-left rounded-lg border bg-white px-3 py-2.5 transition-colors hover:bg-gray-50/80 ${
+            className={`w-full rounded-xl border bg-app-surface px-4 py-3 text-left shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[box-shadow,border-color,background-color] hover:bg-app-border-muted/40 ${
                 overdueAccent
-                    ? "border-rose-200/90 ring-1 ring-rose-100/60"
-                    : "border-gray-200/80"
+                    ? "border-rose-200/90 ring-1 ring-rose-100/70"
+                    : "border-app-border hover:border-neutral-400/30"
             }`}
         >
-            <div className="flex flex-wrap items-center gap-1.5 gap-y-1 mb-1.5">
+            <div className="mb-2 flex flex-wrap items-center gap-2 gap-y-1.5">
                 <span
-                    className={`text-[10px] font-medium px-2 py-0.5 rounded border ${statusClass(
+                    className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${statusClass(
                         task.status
                     )}`}
                 >
                     {statusLabel(task.status)}
                 </span>
                 <span
-                    className={`text-[10px] font-medium px-2 py-0.5 rounded border ${priorityClass(
+                    className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${priorityClass(
                         task.priority
                     )}`}
                 >
                     {priorityLabel(task.priority)}
                 </span>
                 {overdueAccent ? (
-                    <span className="text-[10px] font-medium text-rose-700 bg-rose-50 border border-rose-200/80 px-2 py-0.5 rounded">
+                    <span className="inline-flex items-center rounded-md border border-rose-200/90 bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-800">
                         Просрочено
                     </span>
                 ) : null}
             </div>
-            <p className="text-[13px] font-medium text-gray-900 line-clamp-2">{task.title}</p>
-            <p className="text-[11px] text-gray-500 mt-1 line-clamp-1">
+            <p className="text-[14px] font-semibold leading-snug text-app-heading line-clamp-2">
+                {task.title}
+            </p>
+            <p className="mt-1 line-clamp-1 text-[12px] text-app-muted">
                 {task.project?.title ? `Проект: ${task.project.title}` : "Без проекта"}
             </p>
-            <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                 <span
-                    className={`text-[11px] font-medium ${
-                        overdueAccent ? "text-rose-600" : "text-gray-600"
+                    className={`text-xs font-semibold tabular-nums ${
+                        overdueAccent ? "text-rose-600" : "text-app-muted"
                     }`}
                 >
-                    Срок: {formatDue(task.dueDate)}
+                    Срок:{" "}
+                    <span className={overdueAccent ? "" : "text-app-heading"}>
+                        {formatDue(task.dueDate)}
+                    </span>
                 </span>
                 {names.length > 0 ? (
-                    <div className="scale-75 origin-right">
+                    <div className="origin-right scale-75">
                         <AvatarGroup avatars={avatars} names={names} maxVisible={4} />
                     </div>
                 ) : null}
@@ -185,18 +190,32 @@ const DeadlineTaskRow = ({ task, overdueAccent, onOpen }) => {
     );
 };
 
-const Section = ({ title, subtitle, tasks, overdueAccent, emptyText, onOpenTask }) => (
-    <section className="mb-8 last:mb-0">
-        <div className="mb-3">
-            <h3 className="text-base font-medium text-gray-900">{title}</h3>
-            {subtitle ? <p className="text-[12px] text-gray-500 mt-0.5">{subtitle}</p> : null}
+const Section = ({
+    title,
+    subtitle,
+    tasks,
+    overdueAccent,
+    emptyText,
+    onOpenTask,
+    sectionClassName = "",
+}) => (
+    <section
+        className={`rounded-2xl border border-app-border bg-app-surface p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] md:p-6 ${sectionClassName}`}
+    >
+        <div className="mb-4 border-b border-app-border-muted pb-4">
+            <h3 className="text-lg font-semibold tracking-tight text-app-heading">
+                {title}
+            </h3>
+            {subtitle ? (
+                <p className="mt-1 text-sm leading-relaxed text-app-muted">{subtitle}</p>
+            ) : null}
         </div>
         {tasks.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/40 px-4 py-6 text-center text-[13px] text-gray-500">
+            <div className="rounded-xl bg-app-border-muted/50 px-4 py-10 text-center text-sm text-app-muted">
                 {emptyText}
             </div>
         ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2.5">
                 {tasks.map((t) => (
                     <DeadlineTaskRow
                         key={t._id}
@@ -250,27 +269,28 @@ export const DeadlinesWorkspace = () => {
     return (
         <DashboardLayout activeMenu={menuPath}>
             <div className="my-5">
-                <div className="mb-6">
-                    <h2 className="text-xl md:text-2xl font-medium text-gray-900">Дедлайны</h2>
-                    <p className="text-[13px] text-gray-500 mt-1">
-                        Контроль сроков: просроченные, сегодня, неделя и ближайшие даты
+                <div className="mb-8">
+                    <h2 className="text-2xl font-semibold tracking-tight text-app-heading md:text-[1.65rem]">
+                        Дедлайны
+                    </h2>
+                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-app-muted">
+                        Просроченные, сегодня, неделя и ближайшие сроки без календаря
                     </p>
                 </div>
 
                 {loading ? (
-                    <p className="text-sm text-gray-500">Загрузка…</p>
+                    <p className="text-sm text-app-muted">Загрузка…</p>
                 ) : (
-                    <>
-                        <div className="rounded-xl border border-rose-100/90 bg-rose-50/20 p-4 mb-8">
-                            <Section
-                                title="Просроченные"
-                                subtitle="Не завершены и срок уже прошёл"
-                                tasks={buckets.overdue}
-                                overdueAccent
-                                emptyText="Нет просроченных задач"
-                                onOpenTask={openTask}
-                            />
-                        </div>
+                    <div className="flex flex-col gap-8">
+                        <Section
+                            title="Просроченные"
+                            subtitle="Не завершены и срок уже прошёл"
+                            tasks={buckets.overdue}
+                            overdueAccent
+                            emptyText="Нет просроченных задач"
+                            onOpenTask={openTask}
+                            sectionClassName="border-rose-200/70 bg-rose-50/25"
+                        />
 
                         <Section
                             title="Сегодня"
@@ -295,7 +315,7 @@ export const DeadlinesWorkspace = () => {
                             emptyText="Нет задач в этом окне"
                             onOpenTask={openTask}
                         />
-                    </>
+                    </div>
                 )}
             </div>
         </DashboardLayout>
