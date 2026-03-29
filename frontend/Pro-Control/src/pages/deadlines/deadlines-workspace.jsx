@@ -358,28 +358,28 @@ const DeadlineSection = ({
     loading = false,
     sectionTone = "soon",
 }) => {
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
     const count = tasks.length;
     const shellClass = SECTION_SHELL_BY_TONE[sectionTone] || SECTION_SHELL_BY_TONE.soon;
     const emptyClass = EMPTY_STATE_BY_TONE[sectionTone] || EMPTY_STATE_BY_TONE.soon;
 
     return (
         <section className={shellClass}>
-            <div className="px-5 pt-5 md:px-6 md:pt-6">
+            <div
+                className={`px-5 pt-5 md:px-6 md:pt-6 ${expanded ? "pb-3 md:pb-3" : "pb-5 md:pb-6"}`}
+            >
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
                             <h3 className="text-base font-semibold tracking-tight text-zinc-900 md:text-[1.0625rem]">
                                 {title}
                             </h3>
-                            {!loading && count > 0 ? (
-                                <span className="text-xs font-medium tabular-nums text-zinc-400">
-                                    {count}
-                                </span>
-                            ) : null}
+                            <span className="text-xs font-medium tabular-nums text-zinc-500">
+                                {count}
+                            </span>
                         </div>
                         {subtitle ? (
-                            <p className="mt-1 text-sm leading-relaxed text-zinc-500">{subtitle}</p>
+                            <p className="mt-1.5 text-sm leading-relaxed text-zinc-500">{subtitle}</p>
                         ) : null}
                     </div>
                     <button
@@ -398,7 +398,7 @@ const DeadlineSection = ({
             </div>
 
             {expanded ? (
-                <div className="px-5 pb-5 pt-4 md:px-6 md:pb-6">
+                <div className="px-5 pb-5 pt-3 md:px-6 md:pb-6 md:pt-3">
                     {loading ? (
                         <DeadlineSectionSkeletonBody sectionTone={sectionTone} />
                     ) : count === 0 ? (

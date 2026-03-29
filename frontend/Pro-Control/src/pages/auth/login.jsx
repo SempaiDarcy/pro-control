@@ -61,13 +61,17 @@ export const Login = () => {
 
     return (
         <AuthLayout>
-            <div className="lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center">
-                <h3 className="text-xl font-semibold text-black">С возвращением</h3>
-                <p className="text-xs text-slate-700 mt-[5px] mb-6">
-                    Пожалуйста, введите свои данные для входа
-                </p>
+            <>
+                <div className="w-full space-y-2 text-left">
+                    <h3 className="text-2xl font-semibold tracking-tight text-zinc-900">
+                        С возвращением
+                    </h3>
+                    <p className="text-sm font-normal leading-relaxed text-zinc-500">
+                        Пожалуйста, введите свои данные для входа
+                    </p>
+                </div>
 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleLogin} className="flex w-full flex-col gap-4">
                     <Input
                         value={email}
                         onChange={({target}) => setEmail(target.value)}
@@ -84,20 +88,23 @@ export const Login = () => {
                         type="password"
                     />
 
-                    {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
+                    {error && <p className="text-sm text-red-600">{error}</p>}
 
                     <button type="submit" className="btn-primary">
                         ВОЙТИ
                     </button>
 
-                    <p className="text-[13px] text-slate-800 mt-3">
+                    <p className="text-center text-sm text-zinc-500">
                         Ещё нет аккаунта?{" "}
-                        <Link className="font-medium text-primary underline" to="/signup">
+                        <Link
+                            className="font-medium text-primary underline underline-offset-4 hover:opacity-90"
+                            to="/signUp"
+                        >
                             Зарегистрироваться
                         </Link>
                     </p>
                 </form>
-            </div>
+            </>
         </AuthLayout>
     );
 };

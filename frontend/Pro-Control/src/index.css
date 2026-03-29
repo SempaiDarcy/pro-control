@@ -69,6 +69,43 @@
     @apply my-1 w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
+/* Только экраны login / sign-up: спокойный zinc, без яркого primary на полях и кнопке */
+.auth-form-scope .input-box {
+    @apply mb-0 mt-1.5 rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm transition-[box-shadow,border-color];
+}
+
+.auth-form-scope .input-box:focus-within {
+    @apply border-zinc-300 shadow-[0_0_0_3px_rgba(24,24,27,0.08)];
+}
+
+.auth-form-scope label {
+    @apply block text-xs font-medium tracking-tight text-zinc-700;
+}
+
+.auth-form-scope .input-box input::placeholder {
+    color: #a1a1aa;
+}
+
+.auth-form-scope .input-box .text-primary {
+    @apply text-zinc-500;
+}
+
+.auth-form-scope .btn-primary {
+    @apply mt-3 bg-zinc-900 hover:bg-zinc-800 focus-visible:ring-zinc-600/45;
+}
+
+.auth-form-scope a.font-medium.text-primary {
+    @apply font-medium text-zinc-800 underline underline-offset-4 hover:text-zinc-950;
+}
+
+.auth-form-scope .auth-sign-up-field {
+    @apply flex min-w-0 flex-col;
+}
+
+.auth-form-scope .auth-sign-up-field > label {
+    @apply mb-0 flex min-h-[2.75rem] items-end text-xs font-medium leading-snug tracking-tight text-zinc-700;
+}
+
 .card {
     @apply bg-app-surface p-6 rounded-2xl border border-app-border shadow-[0_1px_2px_rgba(0,0,0,0.05)];
 }
