@@ -17,6 +17,7 @@ import {UserDashboard} from "./pages/user/user-dashboard.jsx";
 import {MyTasks} from "./pages/user/my-tasks.jsx";
 import {ViewTaskDetails} from "./pages/user/view-task-details.jsx";
 import {ProjectsOverview} from "./pages/projects/projects-overview.jsx";
+import {DeadlinesWorkspace} from "./pages/deadlines/deadlines-workspace.jsx";
 import UserProvider, {UserContext} from "./context/user-context.jsx";
 import {useContext} from "react";
 import {Toaster} from "react-hot-toast";
@@ -34,6 +35,7 @@ function App() {
                         <Route element={<PrivateRoute allowedRoles={["admin"]}/>}>
                             <Route path="/admin/dashboard" element={<Dashboard/>}/>
                             <Route path="/admin/projects" element={<ProjectsOverview/>}/>
+                            <Route path="/admin/deadlines" element={<DeadlinesWorkspace/>}/>
                             <Route path="/admin/tasks" element={<ManageTasks/>}/>
                             <Route path="/admin/create-task" element={<CreateTask/>}/>
                             <Route path="/admin/users" element={<ManageUsers/>}/>
@@ -43,6 +45,7 @@ function App() {
                         <Route element={<PrivateRoute allowedRoles={["member"]}/>}>
                             <Route path="/user/dashboard" element={<UserDashboard/>}/>
                             <Route path="/user/projects" element={<ProjectsOverview/>}/>
+                            <Route path="/user/deadlines" element={<DeadlinesWorkspace/>}/>
                             <Route path="/user/tasks" element={<MyTasks/>}/>
                             <Route path="/user/task-details/:id" element={<ViewTaskDetails />} />
                         </Route>
