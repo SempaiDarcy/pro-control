@@ -1,6 +1,6 @@
-export const TaskStatusTabs = ({ tabs, activeTab, setActiveTab }) => {
+export const TaskStatusTabs = ({ tabs, activeTab, setActiveTab, wrapperClassName = "my-2" }) => {
     return (
-        <div className="my-2">
+        <div className={wrapperClassName}>
             <div className="flex">
                 {tabs.map((tab) => (
                     <button

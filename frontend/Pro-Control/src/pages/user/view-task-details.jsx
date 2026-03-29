@@ -4,6 +4,7 @@ import axiosInstance from "../../utils/axios-instance.js";
 import { API_PATHS } from "../../utils/api-paths.js";
 import { DashboardLayout } from "../../components/layouts/dashboard-layout.jsx";
 import { AvatarGroup } from "../../components/avatar-group.jsx";
+import { TaskActivitySection } from "../../components/task-activity-section.jsx";
 import { LuSquareArrowOutUpRight } from "react-icons/lu";
 
 export const ViewTaskDetails = () => {
@@ -124,6 +125,12 @@ export const ViewTaskDetails = () => {
                                 <InfoBox label="Описание" value={task?.description} />
                             </div>
 
+                            {task?.project?.title ? (
+                                <div className="mt-3">
+                                    <InfoBox label="Проект" value={task.project.title} />
+                                </div>
+                            ) : null}
+
                             <div className="grid grid-cols-12 gap-4 mt-4">
                                 <div className="col-span-6 md:col-span-4">
                                     <InfoBox label="Приоритет" value={getPriorityLabel(task?.priority)} />
@@ -173,6 +180,8 @@ export const ViewTaskDetails = () => {
                                     ))}
                                 </div>
                             )}
+
+                            <TaskActivitySection entries={task?.activity} />
                         </div>
                     </div>
                 )}

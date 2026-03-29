@@ -13,6 +13,7 @@ import {TodoListInput} from "../../components/inputs/todolist-input.jsx";
 import {AddAttachmentsInput} from "../../components/inputs/add-attachments-input.jsx";
 import {DeleteAlert} from "../../components/delete-alert.jsx";
 import {Modal} from "../../components/modal.jsx";
+import {TaskActivitySection} from "../../components/task-activity-section.jsx";
 
 export const CreateTask = () => {
     const location = useLocation();
@@ -24,11 +25,13 @@ export const CreateTask = () => {
         description: "",
         priority: "Low",
         dueDate: null,
+        project: "",
         assignedTo: [],
         todoChecklist: [],
         attachments: [],
     });
 
+    const [projects, setProjects] = useState([]);
     const [currentTask, setCurrentTask] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -44,11 +47,20 @@ export const CreateTask = () => {
             description: "",
             priority: "Low",
             dueDate: null,
+            project: "",
             assignedTo: [],
             todoChecklist: [],
             attachments: [],
         });
     };
+
+    const projectOptions = [
+        { label: "Без проекта", value: "" },
+        ...projects.map((p) => ({
+            label: p.title,
+            value: String(p._id),
+        })),
+    ];
 
     const createTask = async () => {
         setLoading(true);
@@ -58,11 +70,20 @@ export const CreateTask = () => {
                 completed: false,
             }));
 
-            await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
-                ...taskData,
+            const payload = {
+                title: taskData.title,
+                description: taskData.description,
+                priority: taskData.priority,
                 dueDate: new Date(taskData.dueDate).toISOString(),
+                assignedTo: taskData.assignedTo,
                 todoChecklist: todolist,
-            });
+                attachments: taskData.attachments,
+            };
+            if (taskData.project) {
+                payload.project = taskData.project;
+            }
+
+            await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, payload);
 
             toast.success("Задача успешно создана");
             clearData();
@@ -85,11 +106,25 @@ export const CreateTask = () => {
                 };
             });
 
-            await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK(taskId), {
-                ...taskData,
+            const payload = {
+                title: taskData.title,
+                description: taskData.description,
+                priority: taskData.priority,
                 dueDate: new Date(taskData.dueDate).toISOString(),
+                assignedTo: taskData.assignedTo,
                 todoChecklist: todolist,
-            });
+                attachments: taskData.attachments,
+                project: taskData.project ? taskData.project : null,
+            };
+
+            const response = await axiosInstance.put(
+                API_PATHS.TASKS.UPDATE_TASK(taskId),
+                payload
+            );
+
+            if (response.data?.updatedTask) {
+                setCurrentTask(response.data.updatedTask);
+            }
 
             toast.success("Задача успешно обновлена");
         } catch (error) {
@@ -122,6 +157,7 @@ export const CreateTask = () => {
                     description: taskInfo.description,
                     priority: taskInfo.priority,
                     dueDate: taskInfo.dueDate ? moment(taskInfo.dueDate).format("YYYY-MM-DD") : null,
+                    project: taskInfo.project?._id ? String(taskInfo.project._id) : "",
                     assignedTo: taskInfo.assignedTo?.map((i) => i?._id) || [],
                     todoChecklist: taskInfo.todoChecklist?.map((i) => i?.text) || [],
                     attachments: taskInfo.attachments || [],
@@ -142,6 +178,18 @@ export const CreateTask = () => {
             console.error("Ошибка при удалении:", error);
         }
     };
+
+    useEffect(() => {
+        const loadProjects = async () => {
+            try {
+                const response = await axiosInstance.get(API_PATHS.PROJECTS.LIST);
+                setProjects(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                console.error("Ошибка при загрузке проектов:", error);
+            }
+        };
+        loadProjects();
+    }, []);
 
     useEffect(() => {
         if (taskId) getTaskDetailsByID(taskId);
@@ -188,6 +236,18 @@ export const CreateTask = () => {
                                 rows={4}
                                 value={taskData.description}
                                 onChange={({target}) => handleValueChange("description", target.value)}
+                            />
+                        </div>
+
+                        <div className="mt-3">
+                            <label className="text-xs font-medium text-slate-600">
+                                Проект
+                            </label>
+                            <SelectDropdown
+                                options={projectOptions}
+                                value={taskData.project || ""}
+                                onChange={(value) => handleValueChange("project", value)}
+                                placeholder="Выберите проект (необязательно)"
                             />
                         </div>
 
@@ -262,6 +322,10 @@ export const CreateTask = () => {
                                 {taskId ? "СОХРАНИТЬ ИЗМЕНЕНИЯ" : "СОЗДАТЬ ЗАДАЧУ"}
                             </button>
                         </div>
+
+                        {taskId ? (
+                            <TaskActivitySection entries={currentTask?.activity} />
+                        ) : null}
                     </div>
                 </div>
             </div>
