@@ -9,8 +9,9 @@ import {
 } from "recharts";
 
 /**
- * Тренд по дате создания задач из recentTasks (без новых полей API).
- * Серии: создано в месяце, из них со статусом «Завершено».
+ * Тренд по дате создания (массив задач с createdAt + status).
+ * Админ-дашборд передаёт taskTrendSource со всеми задачами; fallback — recentTasks.
+ * Серии: создано в месяце; завершено — задачи, созданные в этом месяце, со статусом Completed.
  */
 export function buildMonthlyTrendFromRecentTasks(tasks = [], monthsBack = 6) {
     const buckets = [];
@@ -115,7 +116,7 @@ export function DashboardTaskTrendChart({ data }) {
                 </AreaChart>
             </ResponsiveContainer>
             <p className="mt-2 text-center text-[11px] text-zinc-400">
-                По дате создания задач из последней выборки на экране
+                По дате создания; завершено — среди задач, созданных в этом месяце
             </p>
         </div>
     );

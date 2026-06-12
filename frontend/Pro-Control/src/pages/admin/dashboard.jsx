@@ -61,7 +61,11 @@ export const Dashboard = () => {
             if (response.data) {
                 setDashboardData(response.data);
                 prepareChartData(response.data?.charts || null);
-                setTrendData(buildMonthlyTrendFromRecentTasks(response.data?.recentTasks || []));
+                setTrendData(
+                    buildMonthlyTrendFromRecentTasks(
+                        response.data?.taskTrendSource || response.data?.recentTasks || []
+                    )
+                );
             }
         } catch (error) {
             console.error("Ошибка при получении данных:", error);
@@ -87,7 +91,7 @@ export const Dashboard = () => {
         <>
             <section className="mb-8">
                 <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 md:text-[1.65rem]">
-                    Здравствуй, {user?.name}!
+                    Здравствуйте, {user?.name}!
                 </h2>
                 <p className="mt-2 text-sm text-zinc-500">
                     {moment().locale("ru").format("dddd, D MMMM YYYY, HH:mm")}
@@ -156,7 +160,7 @@ export const Dashboard = () => {
                             Динамика задач
                         </h3>
                         <p className="mt-0.5 text-xs text-zinc-500">
-                            Создано и завершено по месяцам (по выборке последних задач)
+                            Создано и завершено по месяцам (по всем задачам, окно — 6 месяцев)
                         </p>
                     </div>
                     <DashboardTaskTrendChart data={trendData} />
