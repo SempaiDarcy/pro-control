@@ -1,6 +1,62 @@
 const Project = require("../models/Project");
 const Task = require("../models/Task");
 
+const participantCount = (p) => {
+    const ids = new Set();
+    const cb = p.createdBy;
+    if (cb && typeof cb === "object" && cb._id) ids.add(String(cb._id));
+    else if (cb) ids.add(String(cb));
+    (p.members || []).forEach((m) => {
+        const id = m && typeof m === "object" && m._id != null ? m._id : m;
+        if (id) ids.add(String(id));
+    });
+    return ids.size;
+};
+
+const getTaskStatsByProjectIds = async (projectIds) => {
+    const map = new Map();
+    if (!projectIds || projectIds.length === 0) return map;
+
+    const rows = await Task.aggregate([
+        { $match: { project: { $in: projectIds } } },
+        {
+            $group: {
+                _id: "$project",
+                taskCount: { $sum: 1 },
+                completedTaskCount: {
+                    $sum: { $cond: [{ $eq: ["$status", "Completed"] }, 1, 0] },
+                },
+            },
+        },
+    ]);
+
+    rows.forEach((r) => {
+        const total = r.taskCount || 0;
+        const done = r.completedTaskCount || 0;
+        map.set(String(r._id), {
+            taskCount: total,
+            completedTaskCount: done,
+            progressPercent: total === 0 ? 0 : Math.round((done / total) * 100),
+        });
+    });
+
+    return map;
+};
+
+const mergeProjectStats = (projectPlain, statsMap) => {
+    const key = String(projectPlain._id);
+    const s = statsMap.get(key) || {
+        taskCount: 0,
+        completedTaskCount: 0,
+        progressPercent: 0,
+    };
+    return {
+        ...projectPlain,
+        ...s,
+        participantCount: participantCount(projectPlain),
+    };
+};
+
 const canViewProject = (project, user) => {
     if (user.role === "admin") return true;
     const uid = user._id.toString();
@@ -59,9 +115,14 @@ const getProjects = async (req, res) => {
         const projects = await Project.find(query)
             .populate("createdBy", "name email profileImageUrl")
             .populate("members", "name email profileImageUrl")
-            .sort({ updatedAt: -1 });
+            .sort({ updatedAt: -1 })
+            .lean();
 
-        res.json(projects);
+        const ids = projects.map((p) => p._id);
+        const statsMap = await getTaskStatsByProjectIds(ids);
+        const withStats = projects.map((p) => mergeProjectStats(p, statsMap));
+
+        res.json(withStats);
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
@@ -82,7 +143,9 @@ const getProjectById = async (req, res) => {
             return res.status(403).json({ message: "Not authorized" });
         }
 
-        res.json(project);
+        const statsMap = await getTaskStatsByProjectIds([project._id]);
+        const plain = project.toObject();
+        res.json(mergeProjectStats(plain, statsMap));
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }

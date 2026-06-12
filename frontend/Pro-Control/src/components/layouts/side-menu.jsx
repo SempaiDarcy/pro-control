@@ -1,21 +1,27 @@
-import {useContext, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {UserContext} from "../../context/user-context.jsx";
-import {SIDE_MENU_DATA, SIDE_MENU_USER_DATA} from "../../utils/data.js";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/user-context.jsx";
+import { SIDE_MENU_DATA, SIDE_MENU_USER_DATA } from "../../utils/data.js";
 import { LuUser } from "react-icons/lu";
 
-export const SideMenu = ({activeMenu}) => {
-    const {user, clearUser} = useContext(UserContext);
+export const SideMenu = ({ activeMenu, onNavigate, collapsed = false }) => {
+    const { user, clearUser } = useContext(UserContext);
     const [sideMenuData, setSideMenuData] = useState([]);
-
     const navigate = useNavigate();
 
+    const isMobileDrawer = typeof onNavigate === "function";
+    const narrow = collapsed && !isMobileDrawer;
+
+    const closeMobile = () => {
+        if (isMobileDrawer) onNavigate();
+    };
+
     const handleClick = (route) => {
+        closeMobile();
         if (route === "logout") {
             handelLogout();
             return;
         }
-
         navigate(route);
     };
 
@@ -27,47 +33,89 @@ export const SideMenu = ({activeMenu}) => {
 
     useEffect(() => {
         if (user) {
-            setSideMenuData(user?.role === 'admin' ? SIDE_MENU_DATA : SIDE_MENU_USER_DATA)
+            setSideMenuData(user?.role === "admin" ? SIDE_MENU_DATA : SIDE_MENU_USER_DATA);
         }
-        return () => {
-        };
+        return () => {};
     }, [user]);
-    return <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 sticky top-[61px] z-20">
-        <div className="flex flex-col items-center justify-center mb-7 pt-5">
-            <div className="relative">
-                {user?.profileImageUrl ? (
-                    <img
-                        src={user.profileImageUrl}
-                        alt="Profile Image"
-                        className="w-20 h-20 object-cover rounded-full border-2 border-gray-200"
-                    />
+
+    return (
+        <div className="flex h-full min-h-0 flex-col bg-white">
+            <nav
+                className={`min-h-0 flex-1 space-y-0.5 overflow-y-auto pb-2 ${
+                    narrow ? "px-1.5 pt-1.5" : isMobileDrawer ? "px-2 pt-3" : "px-2 pt-2"
+                }`}
+                aria-label="Основное меню"
+            >
+                {sideMenuData.map((item, index) => {
+                    const isActive = activeMenu === item.path;
+                    const base =
+                        "flex w-full items-center rounded-lg text-sm transition-colors duration-150 cursor-pointer";
+                    const activeCls =
+                        "bg-zinc-100 font-medium text-zinc-900 shadow-sm ring-1 ring-zinc-200/50";
+                    const idleCls =
+                        "font-medium text-zinc-800 hover:bg-zinc-50 hover:text-zinc-950";
+                    const pad = narrow ? "justify-center px-0 py-2" : "gap-3 px-2.5 py-2 text-left";
+
+                    return (
+                        <button
+                            key={`menu_${index}`}
+                            type="button"
+                            title={narrow ? item.label : undefined}
+                            aria-current={isActive ? "page" : undefined}
+                            className={`${base} ${pad} ${isActive ? activeCls : idleCls}`}
+                            onClick={() => handleClick(item.path)}
+                        >
+                            <item.icon
+                                className={`h-[1.125rem] w-[1.125rem] shrink-0 ${isActive ? "text-zinc-800" : "text-zinc-700"}`}
+                            />
+                            {!narrow ? <span className="truncate">{item.label}</span> : null}
+                        </button>
+                    );
+                })}
+            </nav>
+
+            <div className={`mt-auto shrink-0 px-1.5 pb-3 ${narrow ? "pt-1" : "px-2 pt-1"}`}>
+                {narrow ? (
+                    <div className="flex justify-center" title={user?.name || ""}>
+                        {user?.profileImageUrl ? (
+                            <img
+                                src={user.profileImageUrl}
+                                alt=""
+                                className="h-8 w-8 rounded-full border border-zinc-200/80 object-cover"
+                            />
+                        ) : (
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200/80 bg-zinc-50">
+                                <LuUser className="h-3.5 w-3.5 text-zinc-400" />
+                            </div>
+                        )}
+                    </div>
                 ) : (
-                    <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
-                        <LuUser className="text-3xl text-gray-400" />
+                    <div className="flex items-center gap-2.5 rounded-lg bg-zinc-50/90 px-2 py-2">
+                        {user?.profileImageUrl ? (
+                            <img
+                                src={user.profileImageUrl}
+                                alt=""
+                                className="h-8 w-8 shrink-0 rounded-full border border-zinc-200/80 object-cover"
+                            />
+                        ) : (
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-zinc-200/80 bg-white">
+                                <LuUser className="h-3.5 w-3.5 text-zinc-400" />
+                            </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-1">
+                                <p className="truncate text-xs font-medium text-zinc-900">{user?.name || "—"}</p>
+                                {user?.role === "admin" ? (
+                                    <span className="shrink-0 rounded bg-blue-50/90 px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-blue-800 ring-1 ring-blue-200/40">
+                                        Админ
+                                    </span>
+                                ) : null}
+                            </div>
+                            <p className="truncate text-[11px] text-zinc-500">{user?.email || ""}</p>
+                        </div>
                     </div>
                 )}
-
             </div>
-
-            {user?.role === "admin" && (
-                <div className="text-[10px] font-medium text-white bg-primary px-3 py-0.5 rounded mt-1">
-                    Admin
-                </div>)}
-
-            <h5 className="text-gray-950 font-medium leading-6 mt-3">
-                {user?.name || ""}
-            </h5>
-
-            <p className="text-[12px] text-gray-500">{user?.email || ""}</p>
         </div>
-
-        {sideMenuData.map((item, index) => (<button
-                key={`menu_${index}`}
-                className={`w-full flex items-center gap-4 text-[14px] ${activeMenu == item.path ? "text-primary bg-linear-to-r from-blue-50/40 to-blue-100/50 border-r-3" : ""} py-3 px-6 mb-3 cursor-pointer`}
-                onClick={() => handleClick(item.path)}
-            >
-                <item.icon className="text-xl"/>
-                {item.label}
-            </button>))}
-    </div>;
+    );
 };

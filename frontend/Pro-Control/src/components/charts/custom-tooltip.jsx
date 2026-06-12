@@ -1,15 +1,16 @@
-import React from 'react'
+import React from "react";
 
-export const CustomTooltip = ({active, payload}) => {
+export const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-white shadow-md rounded-lg p-2 border border-gray-300">
-                <p className="text-xs font-semibold text-purple-800 mb-1">{payload[0].name}</p>
-                <p className="text-sm text-gray-600">
-                    Задач: <span className="text-sm font-medium text-gray-900">{payload[0].value}</span>
+            <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-md">
+                <p className="font-medium text-zinc-900">{payload[0].name}</p>
+                <p className="mt-1 text-zinc-600">
+                    Задач:{" "}
+                    <span className="font-semibold tabular-nums text-zinc-900">{payload[0].value}</span>
                 </p>
             </div>
         );
     }
     return null;
-}
+};

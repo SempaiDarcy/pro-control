@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { LuUser, LuUpload, LuTrash } from "react-icons/lu";
 
-export const ProfilePhotoSelector = ({ image, setImage }) => {
+export const ProfilePhotoSelector = ({ image, setImage, authChrome = false }) => {
     const inputRef = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -26,7 +26,7 @@ export const ProfilePhotoSelector = ({ image, setImage }) => {
         inputRef.current.click();
     };
     return (
-        <div className="flex justify-center mb-6">
+        <div className={`flex justify-center ${authChrome ? "" : "mb-6"}`}>
             <input
                 type="file"
                 accept="image/*"
@@ -36,12 +36,20 @@ export const ProfilePhotoSelector = ({ image, setImage }) => {
             />
 
             {!image ? (
-                <div className="w-20 h-20 flex items-center justify-center bg-blue-100/50 rounded-full relative cursor-pointer">
-                    <LuUser className="text-4xl text-primary" />
+                <div
+                    className={`relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-full ${
+                        authChrome ? "bg-zinc-100 ring-1 ring-zinc-200/80" : "bg-blue-100/50"
+                    }`}
+                >
+                    <LuUser
+                        className={`text-4xl ${authChrome ? "text-zinc-500" : "text-primary"}`}
+                    />
 
                     <button
                         type="button"
-                        className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full absolute -bottom-1 -right-1 cursor-pointer"
+                        className={`absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white ${
+                            authChrome ? "bg-zinc-800 hover:bg-zinc-900" : "bg-primary"
+                        }`}
                         onClick={onChooseFile}
                     >
                         <LuUpload />

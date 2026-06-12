@@ -1,37 +1,117 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
+/*
+  Global UI foundation: clean neutral shell (warm off-white, no blue-gray canvas).
+  Semantic task priority, status, charts unchanged in components.
+*/
 @theme {
-    --font-display: "Montserrat", "sans-serif";
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Segoe UI",
+        "Apple Color Emoji", "Segoe UI Emoji";
+    --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
     --breakpoint-3xl: 1920px;
-    --color-primary: #1368EC;
+
+    --color-primary: #1368ec;
+    --color-primary-hover: #115dcf;
+
+    --color-app-canvas: #fafafa;
+    --color-app-surface: #ffffff;
+    --color-app-border: #e8e8e8;
+    --color-app-border-muted: #f3f3f3;
+    --color-app-muted: #737373;
+    --color-app-heading: #171717;
 }
 
 @layer base {
     html {
-        font-family: var(--font-display), sans-serif;
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        scrollbar-gutter: stable;
     }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #d4d4d8 #f4f4f5;
+    }
+
+    *::-webkit-scrollbar {
+        width: 9px;
+        height: 9px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: #f4f4f5;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: #d4d4d8;
+        border-radius: 9999px;
+        border: 2px solid #f4f4f5;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background-color: #a1a1aa;
+    }
+
     body {
-        /*background-color: #fcfbfc;*/
-        background-color: #fcfbfc;
+        background-color: var(--color-app-canvas);
+        color: var(--color-app-heading);
         overflow-x: hidden;
     }
 }
 
 .input-box {
-    @apply w-full flex justify-between gap-3 text-sm text-black bg-slate-100/50 rounded px-4 py-3 mb-4 mt-3 border border-slate-200 outline-none;
+    @apply w-full flex justify-between gap-3 text-sm text-app-heading bg-app-border-muted/80 rounded px-4 py-3 mb-4 mt-3 border border-app-border outline-none;
 }
 
 .btn-primary {
-    @apply w-full text-sm font-medium text-white bg-primary shadow-lg shadow-purple-600/5 p-[10px] rounded-md my-1 hover:bg-blue-600/15 hover:text-blue-600 cursor-pointer;
+    @apply my-1 w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+/* Только экраны login / sign-up: спокойный zinc, без яркого primary на полях и кнопке */
+.auth-form-scope .input-box {
+    @apply mb-0 mt-1.5 rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm transition-[box-shadow,border-color];
+}
+
+.auth-form-scope .input-box:focus-within {
+    @apply border-zinc-300 shadow-[0_0_0_3px_rgba(24,24,27,0.08)];
+}
+
+.auth-form-scope label {
+    @apply block text-xs font-medium tracking-tight text-zinc-700;
+}
+
+.auth-form-scope .input-box input::placeholder {
+    color: #a1a1aa;
+}
+
+.auth-form-scope .input-box .text-primary {
+    @apply text-zinc-500;
+}
+
+.auth-form-scope .btn-primary {
+    @apply mt-3 bg-zinc-900 hover:bg-zinc-800 focus-visible:ring-zinc-600/45;
+}
+
+.auth-form-scope a.font-medium.text-primary {
+    @apply font-medium text-zinc-800 underline underline-offset-4 hover:text-zinc-950;
+}
+
+.auth-form-scope .auth-sign-up-field {
+    @apply flex min-w-0 flex-col;
+}
+
+.auth-form-scope .auth-sign-up-field > label {
+    @apply mb-0 flex min-h-[2.75rem] items-end text-xs font-medium leading-snug tracking-tight text-zinc-700;
 }
 
 .card {
-    @apply bg-white p-6 rounded-2xl shadow-md shadow-gray-100 border border-gray-200/50;
+    @apply bg-app-surface p-6 rounded-2xl border border-app-border shadow-[0_1px_2px_rgba(0,0,0,0.05)];
 }
 
 .card-btn {
-    @apply flex items-center gap-3 text-[12px] font-medium text-gray-700 hover:text-primary bg-gray-50 hover:bg-blue-50 px-4 py-1.5 rounded-lg border border-gray-200/50 cursor-pointer;
+    @apply flex items-center gap-3 text-[12px] font-medium text-app-heading hover:text-primary bg-app-border-muted hover:bg-blue-50 px-4 py-1.5 rounded-lg border border-app-border cursor-pointer;
 }
 
 .card-btn-fill {
@@ -39,16 +119,17 @@
 }
 
 .form-card {
-    @apply bg-white p-6 rounded-lg shadow-md shadow-gray-100 border border-gray-200/50;
+    @apply bg-app-surface p-6 rounded-lg border border-app-border shadow-[0_1px_2px_rgba(0,0,0,0.05)];
 }
 
 .form-input {
-    @apply w-full text-sm text-black outline-none bg-white border border-slate-100 px-2.5 py-3 rounded-md mt-2 placeholder:text-gray-500;
+    @apply w-full text-sm outline-none bg-app-surface border border-app-border px-2.5 py-3 rounded-md mt-2 placeholder:text-app-muted text-app-heading;
 }
 
 .add-btn {
     @apply w-full flex items-center justify-center gap-1.5 text-xs md:text-sm font-medium text-primary whitespace-nowrap bg-blue-50 border border-blue-100 rounded-lg px-4 py-2 cursor-pointer;
 }
+
 .download-btn {
     @apply inline-flex flex-row items-center justify-center gap-2 text-xs md:text-[13px] text-lime-900 bg-lime-100 px-2.5 md:px-3 py-1.5 rounded-md border border-lime-200 hover:border-lime-400 cursor-pointer whitespace-nowrap shrink-0;
 }

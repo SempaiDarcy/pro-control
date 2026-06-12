@@ -482,12 +482,18 @@ const getDashboardData = async (req, res) => {
             return acc;
         }, {});
 
-        // Fetch recent 10 tasks
+        // Последние задачи для таблицы на дашборде
         const recentTasks = await Task.find()
             .sort({ createdAt: -1 })
             .limit(10)
             .select("title status priority dueDate createdAt project")
             .populate("project", "title");
+
+        // Для графика «Динамика задач» нужна полная выборка по createdAt, а не только 10 последних
+        const taskTrendSource = await Task.find()
+            .select("status createdAt")
+            .limit(2000)
+            .lean();
 
         res.status(200).json({
             statistics: {
@@ -501,6 +507,7 @@ const getDashboardData = async (req, res) => {
                 taskPriorityLevels,
             },
             recentTasks,
+            taskTrendSource,
         });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });

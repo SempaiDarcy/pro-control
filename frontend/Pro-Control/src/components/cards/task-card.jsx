@@ -3,42 +3,45 @@ import { Progress } from "../progress";
 import { AvatarGroup } from "../avatar-group.jsx";
 import { LuPaperclip } from "react-icons/lu";
 
+const badgeBase =
+    "inline-flex items-center rounded-md px-2.5 py-0.5 text-[11px] font-semibold ring-1 ring-inset";
+
 export const TaskCard = ({
-                             title,
-                             description,
-                             projectTitle,
-                             priority,
-                             status,
-                             progress,
-                             createdAt,
-                             dueDate,
-                             assignedTo,
-                             attachmentCount,
-                             completedTodoCount,
-                             todoChecklist,
-                             onClick,
-                         }) => {
+    title,
+    description,
+    projectTitle,
+    priority,
+    status,
+    progress,
+    createdAt,
+    dueDate,
+    assignedTo,
+    attachmentCount,
+    completedTodoCount,
+    todoChecklist,
+    onClick,
+}) => {
     const getStatusTagColor = () => {
         switch (status) {
             case "In Progress":
-                return "text-cyan-500 bg-cyan-50 border border-cyan-500/10";
+                return `${badgeBase} bg-sky-50/95 text-sky-900 ring-sky-600/12`;
             case "Completed":
-                return "text-lime-500 bg-lime-50 border border-lime-500/20";
+                return `${badgeBase} bg-emerald-50/95 text-emerald-900 ring-emerald-600/12`;
             case "Pending":
             default:
-                return "text-violet-500 bg-violet-50 border border-violet-500/10";
+                return `${badgeBase} bg-violet-50/95 text-violet-900 ring-violet-600/12`;
         }
     };
 
     const getPriorityTagColor = () => {
         switch (priority) {
             case "Low":
-                return "text-emerald-500 bg-emerald-50 border border-emerald-500/10";
+                return `${badgeBase} bg-teal-50/95 text-teal-900 ring-teal-600/12`;
             case "Medium":
-                return "text-amber-500 bg-amber-50 border border-amber-500/10";
+                return `${badgeBase} bg-amber-50/95 text-amber-900 ring-amber-600/14`;
             case "High":
             default:
-                return "text-rose-500 bg-rose-50 border border-rose-500/10";
+                return `${badgeBase} bg-rose-50/95 text-rose-900 ring-rose-600/14`;
         }
     };
 
@@ -75,82 +78,74 @@ export const TaskCard = ({
     };
 
     const isOverdue =
-        status !== "Completed" &&
-        dueDate &&
-        new Date(dueDate).getTime() < Date.now();
+        status !== "Completed" && dueDate && new Date(dueDate).getTime() < Date.now();
 
     const leftBorderClass = isOverdue
         ? "border-rose-500"
         : status === "In Progress"
-            ? "border-cyan-500"
-            : status === "Completed"
-                ? "border-lime-500"
-                : "border-violet-500";
+          ? "border-sky-500"
+          : status === "Completed"
+            ? "border-emerald-500"
+            : "border-violet-500";
 
     return (
         <div
-            className={`bg-white rounded-xl py-4 shadow-md shadow-gray-100 border cursor-pointer ${
-                isOverdue ? "border-rose-200/70 ring-1 ring-rose-100/80" : "border-gray-200/50"
+            className={`cursor-pointer rounded-xl border bg-app-surface py-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-[box-shadow,border-color] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] ${
+                isOverdue
+                    ? "border-rose-200/70 ring-1 ring-rose-100/50"
+                    : "border-app-border"
             }`}
             onClick={onClick}
         >
             <div className="flex flex-wrap items-end gap-2 px-4">
-                <div
-                    className={`text-[11px] font-medium ${getStatusTagColor()} px-4 py-0.5 rounded`}
-                >
-                    {getStatusText()}
-                </div>
-                <div
-                    className={`text-[11px] font-medium ${getPriorityTagColor()} px-4 py-0.5 rounded`}
-                >
-                    {getPriorityText()}
-                </div>
+                <span className={getStatusTagColor()}>{getStatusText()}</span>
+                <span className={getPriorityTagColor()}>{getPriorityText()}</span>
                 {isOverdue ? (
-                    <div className="text-[11px] font-medium text-rose-600 bg-rose-50 border border-rose-200/80 px-3 py-0.5 rounded">
+                    <span
+                        className={`${badgeBase} bg-rose-50/95 text-rose-900 ring-rose-600/18`}
+                    >
                         Просрочено
-                    </div>
+                    </span>
                 ) : null}
             </div>
 
-            <div className={`px-4 border-l-[3px] ${leftBorderClass}`}>
-                <p className="text-sm font-medium text-gray-800 mt-4 line-clamp-2">
-                    {title}
-                </p>
+            <div className={`border-l-[3px] px-4 ${leftBorderClass}`}>
+                <p className="mt-4 line-clamp-2 text-sm font-medium text-app-heading">{title}</p>
 
                 {projectTitle ? (
-                    <p className="text-[11px] text-gray-500 mt-1 font-medium">
+                    <p className="mt-1 text-[11px] font-medium text-app-muted">
                         Проект: {projectTitle}
                     </p>
                 ) : null}
 
-                <p className="text-xs text-gray-500 mt-1.5 line-clamp-2 leading-[18px]">
+                <p className="mt-1.5 line-clamp-2 text-xs leading-[18px] text-app-muted">
                     {description}
                 </p>
 
-                <p className="text-[13px] text-gray-700/80 font-medium mt-2 mb-2 leading-[18px]">
+                <p className="mb-2 mt-2 text-[13px] font-medium leading-[18px] text-app-heading/85">
                     Выполнено задач:{" "}
-                    <span className="font-semibold text-gray-700">
-            {completedTodoCount} / {todoChecklist.length || 0}
-          </span>
+                    <span className="font-semibold text-app-heading">
+                        {completedTodoCount} / {todoChecklist.length || 0}
+                    </span>
                 </p>
 
                 <Progress progress={progress} status={status} />
             </div>
 
             <div className="px-4">
-                <div className="flex items-center justify-between my-1">
+                <div className="my-1 flex items-center justify-between">
                     <div>
-                        <label className="text-xs text-gray-500">Дата начала</label>
-                        <p className="text-[13px] font-medium text-gray-900">
+                        <label className="text-xs text-app-muted">Дата начала</label>
+                        <p className="text-[13px] font-medium text-app-heading">
                             {formatDate(createdAt)}
                         </p>
                     </div>
 
                     <div>
-                        <label className="text-xs text-gray-500">Дата сдачи</label>
+                        <label className="text-xs text-app-muted">Дата сдачи</label>
                         <p
                             className={`text-[13px] font-medium ${
-                                isOverdue ? "text-rose-600" : "text-gray-900"
+                                isOverdue ? "text-rose-600" : "text-app-heading"
                             }`}
                         >
                             {formatDate(dueDate)}
@@ -158,13 +153,13 @@ export const TaskCard = ({
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-3">
+                <div className="mt-3 flex items-center justify-between">
                     <AvatarGroup avatars={assignedTo || []} />
 
                     {attachmentCount > 0 && (
-                        <div className="flex items-center gap-2 bg-blue-50 px-2.5 py-1.5 rounded-lg">
-                            <LuPaperclip className="text-primary" />
-                            <span className="text-xs text-gray-900">{attachmentCount}</span>
+                        <div className="flex items-center gap-2 rounded-lg bg-sky-50/80 px-2.5 py-1.5 ring-1 ring-inset ring-sky-600/10">
+                            <LuPaperclip className="text-sky-700" />
+                            <span className="text-xs text-app-heading">{attachmentCount}</span>
                         </div>
                     )}
                 </div>

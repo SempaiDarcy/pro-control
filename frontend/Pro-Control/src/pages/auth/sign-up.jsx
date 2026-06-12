@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { ProfilePhotoSelector } from "../../components/inputs/profile-photo-selector.jsx";
 import { validateEmail } from "../../utils/helper";
-import { Input } from "../../components/Inputs/Input";
+import { Input } from "../../components/inputs/input.jsx";
 import { Link, useNavigate } from "react-router-dom";
 
 import { AuthLayout } from "../../components/layouts/auth-layout.jsx";
@@ -86,42 +86,56 @@ export const SignUp = () => {
     };
 
     return (
-        <AuthLayout>
-            <div className="lg:w-[100%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center">
-                <h3 className="text-xl font-semibold text-black">Создание аккаунта</h3>
-                <p className="text-xs text-slate-700 mt-[5px] mb-6">
-                    Присоединяйтесь к нам, указав свои данные ниже.
-                </p>
+        <AuthLayout wideFormCard>
+            <>
+                <div className="w-full space-y-2 text-left">
+                    <h3 className="text-2xl font-semibold tracking-tight text-zinc-900">
+                        Создание аккаунта
+                    </h3>
+                    <p className="text-sm font-normal leading-relaxed text-zinc-500">
+                        Присоединяйтесь к нам, указав свои данные ниже.
+                    </p>
+                </div>
 
-                <form onSubmit={handleSignUp}>
-                    <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
+                <form
+                    onSubmit={handleSignUp}
+                    className="auth-sign-up-form flex w-full min-w-0 flex-col gap-5"
+                >
+                    <div className="flex shrink-0 justify-center pt-0.5">
+                        <ProfilePhotoSelector
+                            image={profilePic}
+                            setImage={setProfilePic}
+                            authChrome
+                        />
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid min-w-0 grid-cols-1 gap-x-5 gap-y-5 md:grid-cols-2">
                         <Input
+                            className="auth-sign-up-field min-w-0"
                             value={fullName}
                             onChange={({ target }) => setFullName(target.value)}
                             label="Полное имя"
                             placeholder="Иван Иванов"
                             type="text"
                         />
-
                         <Input
+                            className="auth-sign-up-field min-w-0"
                             value={email}
                             onChange={({ target }) => setEmail(target.value)}
                             label="Электронная почта"
                             placeholder="ivan@example.com"
                             type="text"
                         />
-
                         <Input
+                            className="auth-sign-up-field min-w-0"
                             value={password}
                             onChange={({ target }) => setPassword(target.value)}
                             label="Пароль"
                             placeholder="Минимум 8 символов"
                             type="password"
                         />
-
                         <Input
+                            className="auth-sign-up-field min-w-0"
                             value={adminInviteToken}
                             onChange={({ target }) => setAdminInviteToken(target.value)}
                             label="Код приглашения администратора"
@@ -130,20 +144,23 @@ export const SignUp = () => {
                         />
                     </div>
 
-                    {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
+                    {error && <p className="text-sm text-red-600">{error}</p>}
 
                     <button type="submit" className="btn-primary">
                         СОЗДАТЬ АККАУНТ
                     </button>
 
-                    <p className="text-[13px] text-slate-800 mt-3">
+                    <p className="text-center text-sm text-zinc-500">
                         Уже есть аккаунт?{" "}
-                        <Link className="font-medium text-primary underline" to="/login">
+                        <Link
+                            className="font-medium text-primary underline underline-offset-4 hover:opacity-90"
+                            to="/login"
+                        >
                             Войти
                         </Link>
                     </p>
                 </form>
-            </div>
+            </>
         </AuthLayout>
     );
 };
